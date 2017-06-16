@@ -1,0 +1,2900 @@
+{
+    "Data": [
+        [
+            null,
+            {
+                "generation": "0",
+                "txt": "FY14",
+                "val": "FY14"
+            },
+            {
+                "generation": "0",
+                "txt": "FY14",
+                "val": "FY14"
+            },
+            {
+                "generation": "0",
+                "txt": "FY14",
+                "val": "FY14"
+            },
+            {
+                "generation": "0",
+                "txt": "FY14",
+                "val": "FY14"
+            },
+            {
+                "generation": "0",
+                "txt": "FY14",
+                "val": "FY14"
+            },
+            {
+                "generation": "0",
+                "txt": "FY14",
+                "val": "FY14"
+            },
+            {
+                "generation": "0",
+                "txt": "FY14",
+                "val": "FY14"
+            },
+            {
+                "generation": "0",
+                "txt": "FY14",
+                "val": "FY14"
+            },
+            {
+                "generation": "0",
+                "txt": "FY15",
+                "val": "FY15"
+            },
+            {
+                "generation": "0",
+                "txt": "FY15",
+                "val": "FY15"
+            },
+            {
+                "generation": "0",
+                "txt": "FY15",
+                "val": "FY15"
+            },
+            {
+                "generation": "0",
+                "txt": "FY15",
+                "val": "FY15"
+            },
+            {
+                "generation": "0",
+                "txt": "FY15",
+                "val": "FY15"
+            },
+            {
+                "generation": "0",
+                "txt": "FY15",
+                "val": "FY15"
+            },
+            {
+                "generation": "0",
+                "txt": "FY15",
+                "val": "FY15"
+            },
+            {
+                "generation": "0",
+                "txt": "FY15",
+                "val": "FY15"
+            }
+        ],
+        [
+            null,
+            {
+                "generation": "1",
+                "parent": [
+                    1,
+                    4
+                ],
+                "txt": "Jul",
+                "val": "Jul"
+            },
+            {
+                "generation": "1",
+                "parent": [
+                    1,
+                    4
+                ],
+                "txt": "Aug",
+                "val": "Aug"
+            },
+            {
+                "generation": "1",
+                "parent": [
+                    1,
+                    4
+                ],
+                "txt": "Sep",
+                "val": "Sep"
+            },
+            {
+                "generation": "0",
+                "txt": "Q3",
+                "val": "Q3"
+            },
+            {
+                "generation": "1",
+                "parent": [
+                    1,
+                    8
+                ],
+                "txt": "Oct",
+                "val": "Oct"
+            },
+            {
+                "generation": "1",
+                "parent": [
+                    1,
+                    8
+                ],
+                "txt": "Nov",
+                "val": "Nov"
+            },
+            {
+                "generation": "1",
+                "parent": [
+                    1,
+                    8
+                ],
+                "txt": "Dec",
+                "val": "Dec"
+            },
+            {
+                "generation": "0",
+                "txt": "Q4",
+                "val": "Q4"
+            },
+            {
+                "generation": "1",
+                "parent": [
+                    2,
+                    12
+                ],
+                "txt": "Jan",
+                "val": "Jan"
+            },
+            {
+                "generation": "1",
+                "parent": [
+                    2,
+                    12
+                ],
+                "txt": "Feb",
+                "val": "Feb"
+            },
+            {
+                "generation": "1",
+                "parent": [
+                    2,
+                    12
+                ],
+                "txt": "Mar",
+                "val": "Mar"
+            },
+            {
+                "generation": "0",
+                "txt": "Q1",
+                "val": "Q1"
+            },
+            {
+                "generation": "1",
+                "parent": [
+                    2,
+                    16
+                ],
+                "txt": "Apr",
+                "val": "Apr"
+            },
+            {
+                "generation": "1",
+                "parent": [
+                    2,
+                    16
+                ],
+                "txt": "May",
+                "val": "May"
+            },
+            {
+                "generation": "1",
+                "parent": [
+                    2,
+                    16
+                ],
+                "txt": "Jun",
+                "val": "Jun"
+            },
+            {
+                "generation": "0",
+                "txt": "Q2",
+                "val": "Q2"
+            }
+        ],
+        [
+            {
+                "generation": "2",
+                "parent": [
+                    3,
+                    0
+                ],
+                "txt": "1110: Cash",
+                "val": "1110"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "4.115683006776459E8"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "4.201962018131224E8"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "4.303156982912515E8"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "2",
+                "txt": "",
+                "type": "2",
+                "val": "4.303156982912515E8"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "4.385598436855162E8"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "4.464958377982172E8"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "4.540291240984635E8"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "2",
+                "txt": "",
+                "type": "2",
+                "val": "4.540291240984635E8"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "3.94160805104759E8"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "4.100397452212659E8"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "4.009029277881165E8"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "2",
+                "txt": "",
+                "type": "2",
+                "val": "4.009029277881165E8"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "3.984364417096421E8"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "4.141697750915895E8"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "4.09393108674384E8"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "2",
+                "txt": "",
+                "type": "2",
+                "val": "4.09393108674384E8"
+            }
+        ],
+        [
+            {
+                "generation": "1",
+                "parent": [
+                    11,
+                    0
+                ],
+                "txt": "1100: Cash and Short Term Equivalents",
+                "val": "1100"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "4.115683006776459E8"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "4.201962018131224E8"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "4.303156982912515E8"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "2",
+                "txt": "",
+                "type": "2",
+                "val": "4.303156982912515E8"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "4.385598436855162E8"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "4.464958377982172E8"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "4.540291240984635E8"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "2",
+                "txt": "",
+                "type": "2",
+                "val": "4.540291240984635E8"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "3.94160805104759E8"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "4.100397452212659E8"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "4.009029277881165E8"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "2",
+                "txt": "",
+                "type": "2",
+                "val": "4.009029277881165E8"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "3.984364417096421E8"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "4.141697750915895E8"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "4.09393108674384E8"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "2",
+                "txt": "",
+                "type": "2",
+                "val": "4.09393108674384E8"
+            }
+        ],
+        [
+            {
+                "generation": "2",
+                "parent": [
+                    6,
+                    0
+                ],
+                "txt": "1210: Accounts Receivable",
+                "val": "1210"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "2.9294958285E7"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "3.069860857499999E7"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "2.986195217999999E7"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "2",
+                "txt": "",
+                "type": "2",
+                "val": "2.986195217999999E7"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "2.678986969500001E7"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "2.905629378E7"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "3.6672041505E7"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "2",
+                "txt": "",
+                "type": "2",
+                "val": "3.6672041505E7"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "4.119754102E7"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "2.92562726E7"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "3.987721908E7"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "2",
+                "txt": "",
+                "type": "2",
+                "val": "3.987721908E7"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "4.455236524E7"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "3.34794011E7"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "4.191173924E7"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "2",
+                "txt": "",
+                "type": "2",
+                "val": "4.191173924E7"
+            }
+        ],
+        [
+            {
+                "generation": "2",
+                "parent": [
+                    6,
+                    0
+                ],
+                "txt": "1260: Allowance for Bad Debt",
+                "val": "1260"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "-1310009.76"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "-1456954.09"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "-1602760.45"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "2",
+                "txt": "",
+                "type": "2",
+                "val": "-1602760.45"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "-1731783.22"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "-1874364.19"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "-2049020.98"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "2",
+                "txt": "",
+                "type": "2",
+                "val": "-2049020.98"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "-2489700.9688"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "-2782263.6936"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "-3181035.8826"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "2",
+                "txt": "",
+                "type": "2",
+                "val": "-3181035.8826"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "-3626559.5334"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "-3961353.543"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "-4380470.9334"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "2",
+                "txt": "",
+                "type": "2",
+                "val": "-4380470.9334"
+            }
+        ],
+        [
+            {
+                "generation": "1",
+                "parent": [
+                    11,
+                    0
+                ],
+                "txt": "1200: Accounts Receivable Total",
+                "val": "1200"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "2.7984948525E7"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "2.924165448499999E7"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "2.825919172999999E7"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "2",
+                "txt": "",
+                "type": "2",
+                "val": "2.825919172999999E7"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "2.505808647500001E7"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "2.718192959E7"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "3.4623020525E7"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "2",
+                "txt": "",
+                "type": "2",
+                "val": "3.4623020525E7"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "3.87078400512E7"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "2.64740089064E7"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "3.66961831974E7"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "2",
+                "txt": "",
+                "type": "2",
+                "val": "3.66961831974E7"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "4.09258057066E7"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "2.9518047557E7"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "3.75312683066E7"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "2",
+                "txt": "",
+                "type": "2",
+                "val": "3.75312683066E7"
+            }
+        ],
+        [
+            {
+                "generation": "2",
+                "parent": [
+                    8,
+                    0
+                ],
+                "txt": "1340: Prepaid Expenses",
+                "val": "1340"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "415706.2239109561"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "373606.0978392708"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "280703.3490926285"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "2",
+                "txt": "",
+                "type": "2",
+                "val": "280703.3490926285"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "386361.5985645125"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "351752.3350039504"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "327138.9382292355"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "2",
+                "txt": "",
+                "type": "2",
+                "val": "327138.9382292355"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "2055736.180429082"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "1205547.340244457"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "1189172.166478798"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "2",
+                "txt": "",
+                "type": "2",
+                "val": "1189172.166478798"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "1512329.804150625"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "1134704.621360653"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "904688.6677932206"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "2",
+                "txt": "",
+                "type": "2",
+                "val": "904688.6677932206"
+            }
+        ],
+        [
+            {
+                "generation": "1",
+                "parent": [
+                    11,
+                    0
+                ],
+                "txt": "1300: Other Current Assets Total",
+                "val": "1300"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "415706.2239109561"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "373606.0978392708"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "280703.3490926285"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "2",
+                "txt": "",
+                "type": "2",
+                "val": "280703.3490926285"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "386361.5985645125"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "351752.3350039504"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "327138.9382292355"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "2",
+                "txt": "",
+                "type": "2",
+                "val": "327138.9382292355"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "2055736.180429082"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "1205547.340244457"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "1189172.166478798"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "2",
+                "txt": "",
+                "type": "2",
+                "val": "1189172.166478798"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "1512329.804150625"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "1134704.621360653"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "904688.6677932206"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "2",
+                "txt": "",
+                "type": "2",
+                "val": "904688.6677932206"
+            }
+        ],
+        [
+            {
+                "generation": "2",
+                "parent": [
+                    10,
+                    0
+                ],
+                "txt": "1410: Inventory Material Value",
+                "val": "1410"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "2.155321390833334E7"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "2.2933631455E7"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "2.247922726E7"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "2",
+                "txt": "",
+                "type": "2",
+                "val": "2.247922726E7"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "1.951581522333333E7"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "2.158881459E7"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "2.682753795166667E7"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "2",
+                "txt": "",
+                "type": "2",
+                "val": "2.682753795166667E7"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "4.983904100000001E7"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "3.6021848825E7"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "4.861528372499999E7"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "2",
+                "txt": "",
+                "type": "2",
+                "val": "4.861528372499999E7"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "5.319860379999999E7"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "4.05131392E7"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "5.102615922500001E7"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "2",
+                "txt": "",
+                "type": "2",
+                "val": "5.102615922500001E7"
+            }
+        ],
+        [
+            {
+                "generation": "1",
+                "parent": [
+                    11,
+                    0
+                ],
+                "txt": "1400: Inventory",
+                "val": "1400"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "2.155321390833334E7"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "2.2933631455E7"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "2.247922726E7"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "2",
+                "txt": "",
+                "type": "2",
+                "val": "2.247922726E7"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "1.951581522333333E7"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "2.158881459E7"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "2.682753795166667E7"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "2",
+                "txt": "",
+                "type": "2",
+                "val": "2.682753795166667E7"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "4.983904100000001E7"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "3.6021848825E7"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "4.861528372499999E7"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "2",
+                "txt": "",
+                "type": "2",
+                "val": "4.861528372499999E7"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "5.319860379999999E7"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "4.05131392E7"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "5.102615922500001E7"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "2",
+                "txt": "",
+                "type": "2",
+                "val": "5.102615922500001E7"
+            }
+        ],
+        [
+            {
+                "generation": "0",
+                "txt": "1010: Current Assets",
+                "val": "1010"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "4.615221693348901E8"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "4.727450938509617E8"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "4.813348206303442E8"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "2",
+                "txt": "",
+                "type": "2",
+                "val": "4.813348206303442E8"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "4.835201069824141E8"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "4.956183343132211E8"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "5.158068215133594E8"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "2",
+                "txt": "",
+                "type": "2",
+                "val": "5.158068215133594E8"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "4.847634223363881E8"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "4.737411502929104E8"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "4.874035668769952E8"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "2",
+                "txt": "",
+                "type": "2",
+                "val": "4.874035668769952E8"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "4.940731810203927E8"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "4.853356664699501E8"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "4.988552248737772E8"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "2",
+                "txt": "",
+                "type": "2",
+                "val": "4.988552248737772E8"
+            }
+        ],
+        [
+            {
+                "generation": "2",
+                "parent": [
+                    21,
+                    0
+                ],
+                "txt": "1510: PPE-Land",
+                "val": "1510"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "8500000.0"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "8500000.0"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "8500000.0"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "2",
+                "txt": "",
+                "type": "2",
+                "val": "8500000.0"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "8500000.0"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "8500000.0"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "8500000.0"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "2",
+                "txt": "",
+                "type": "2",
+                "val": "8500000.0"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "8500000.0"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "8500000.0"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "8500000.0"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "2",
+                "txt": "",
+                "type": "2",
+                "val": "8500000.0"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "8500000.0"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "8500000.0"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "8500000.0"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "2",
+                "txt": "",
+                "type": "2",
+                "val": "8500000.0"
+            }
+        ],
+        [
+            {
+                "generation": "2",
+                "parent": [
+                    21,
+                    0
+                ],
+                "txt": "1520: PPE-Building and Improvements",
+                "val": "1520"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "9.211313865E7"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "9.211313865E7"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "9.211313865E7"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "2",
+                "txt": "",
+                "type": "2",
+                "val": "9.211313865E7"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "9.211313865E7"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "9.211313865E7"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "9.211313865E7"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "2",
+                "txt": "",
+                "type": "2",
+                "val": "9.211313865E7"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "9.211313865E7"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "9.211313865E7"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "9.211313865E7"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "2",
+                "txt": "",
+                "type": "2",
+                "val": "9.211313865E7"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "9.211313865E7"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "9.211313865E7"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "9.211313865E7"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "2",
+                "txt": "",
+                "type": "2",
+                "val": "9.211313865E7"
+            }
+        ],
+        [
+            {
+                "generation": "2",
+                "parent": [
+                    21,
+                    0
+                ],
+                "txt": "1530: PPE-Machinery & Equipment",
+                "val": "1530"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "1.392189873E7"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "1.392189873E7"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "1.392189873E7"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "2",
+                "txt": "",
+                "type": "2",
+                "val": "1.392189873E7"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "1.392189873E7"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "1.392189873E7"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "1.392189873E7"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "2",
+                "txt": "",
+                "type": "2",
+                "val": "1.392189873E7"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "1.392189873E7"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "1.392189873E7"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "1.392189873E7"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "2",
+                "txt": "",
+                "type": "2",
+                "val": "1.392189873E7"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "1.392189873E7"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "1.392189873E7"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "1.392189873E7"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "2",
+                "txt": "",
+                "type": "2",
+                "val": "1.392189873E7"
+            }
+        ],
+        [
+            {
+                "generation": "2",
+                "parent": [
+                    21,
+                    0
+                ],
+                "txt": "1540: PPE-Furniture",
+                "val": "1540"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "1.33232525E7"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "1.33232525E7"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "1.33232525E7"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "2",
+                "txt": "",
+                "type": "2",
+                "val": "1.33232525E7"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "1.33232525E7"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "1.33232525E7"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "1.33232525E7"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "2",
+                "txt": "",
+                "type": "2",
+                "val": "1.33232525E7"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "1.33232525E7"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "1.33232525E7"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "1.33232525E7"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "2",
+                "txt": "",
+                "type": "2",
+                "val": "1.33232525E7"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "1.33232525E7"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "1.33232525E7"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "1.33232525E7"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "2",
+                "txt": "",
+                "type": "2",
+                "val": "1.33232525E7"
+            }
+        ],
+        [
+            {
+                "generation": "2",
+                "parent": [
+                    21,
+                    0
+                ],
+                "txt": "1550: PPE-Vehicles",
+                "val": "1550"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "2.455939672E7"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "2.455939672E7"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "2.455939672E7"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "2",
+                "txt": "",
+                "type": "2",
+                "val": "2.455939672E7"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "2.455939672E7"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "2.455939672E7"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "2.455939672E7"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "2",
+                "txt": "",
+                "type": "2",
+                "val": "2.455939672E7"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "2.455939672E7"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "2.455939672E7"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "2.455939672E7"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "2",
+                "txt": "",
+                "type": "2",
+                "val": "2.455939672E7"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "2.455939672E7"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "2.455939672E7"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "1",
+                "txt": "",
+                "type": "2",
+                "val": "2.455939672E7"
+            },
+            {
+                "cellsColor": "",
+                "cellsToolTip": "",
+                "dataFormat": "0,0",
+                "enumId": "",
+                "status": "2",
+                "txt": "",
+                "type": "2",
+                "val": "2.455939672E7"
+            }
+        ]
+    ],
+    "Dimensions": {
+        "ColumnDimensions": [
+            {
+                "col": "0",
+                "display": "Year:Year",
+                "expand": "1",
+                "formula": "0",
+                "hidden": "0",
+                "id": "6",
+                "name": "Year",
+                "type": "year"
+            },
+            {
+                "col": "1",
+                "display": "Period:Period",
+                "expand": "0",
+                "formula": "0",
+                "hidden": "0",
+                "id": "7",
+                "name": "Period",
+                "type": "time"
+            }
+        ],
+        "POVDimensions": [
+            {
+                "display": "BaseData",
+                "expand": "1",
+                "formula": "0",
+                "hidden": "1",
+                "id": "0",
+                "name": "HSP_View",
+                "pov": "BaseData",
+                "type": "none"
+            },
+            {
+                "display": "Forecast",
+                "expand": "1",
+                "formula": "0",
+                "hidden": "0",
+                "id": "1",
+                "name": "Scenario",
+                "pov": "Forecast",
+                "type": "scenario"
+            },
+            {
+                "display": "Working",
+                "expand": "1",
+                "formula": "0",
+                "hidden": "0",
+                "id": "2",
+                "name": "Version",
+                "pov": "Working",
+                "type": "version"
+            },
+            {
+                "display": "Total Department",
+                "expand": "1",
+                "formula": "0",
+                "hidden": "0",
+                "id": "3",
+                "name": "Entity",
+                "pov": "TD",
+                "type": "entity"
+            },
+            {
+                "display": "Total Product",
+                "expand": "1",
+                "formula": "0",
+                "hidden": "1",
+                "id": "4",
+                "name": "Product",
+                "pov": "P_TP",
+                "type": "none"
+            }
+        ],
+        "RowDimensions": [
+            {
+                "display": "Account",
+                "expand": "0",
+                "formula": "0",
+                "hidden": "0",
+                "id": "5",
+                "name": "Account",
+                "row": "0",
+                "type": "account"
+            }
+        ]
+    },
+    "Options": {
+        "columns": 17,
+        "cube": "Plan1",
+        "gridType": "2",
+        "name": {
+            "displayName": "Balance Sheet - Forecast",
+            "id": "51248"
+        },
+        "preferences": {
+            "FormatSetting": {
+                "val": "-2147483646"
+            },
+            "aliasTableName": {
+                "alsTbls": "",
+                "val": "Default"
+            },
+            "errorLabelText": {
+                "val": "#Error"
+            },
+            "pageMemberIndent": {
+                "val": "0"
+            },
+            "repeatMemberLabelsInForms": {
+                "val": "0"
+            }
+        },
+        "properties": {
+            "cellsURLs": "1",
+            "gridSpreader": "1",
+            "massAllocate": "0"
+        },
+        "rows": 17
+    }
+}

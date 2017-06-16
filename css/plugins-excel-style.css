@@ -1,0 +1,88 @@
+
+
+
+
+
+
+
+
+
+.directionLeft{
+	direction:ltr;
+}
+
+.directionRight{
+   direction:rtl;
+}
+
+.slick-header-columns {
+    /*border-bottom: 1px solid #BBBBBB;*/
+    font: 10pt Calibri,'Segoe UI',Arial,Verdana,Sans-Serif;
+    color: #5E5E5E;
+}
+
+.selected-header {
+    background-color: #E2E2E2;
+    color: black;
+    font-weight: bold;
+}
+
+.slick-column-name {
+    /*text-transform: uppercase;*/
+    margin-right: 14px;
+    display: block;
+    text-align: center;
+}
+
+.header-overlay {
+    background-color: black;
+}
+
+.cell-overlay, .selection-cell-overlay {
+    background-color: black;
+    border: 0 none;
+}
+
+.dragged {
+    background-color: red;
+    border: 1px dotted white;
+}
+
+input.editor-text {
+    font: 11pt Calibri, 'Segoe UI',Arial,Verdana,Sans-Serif;
+    background: none;
+    border: 0 none;
+    margin: 0;
+    outline: 0 none;
+    padding: 0;
+    width: 100%;
+    font-weight:inherit;
+    font-style:inherit;
+    text-decoration:inherit;
+    color:inherit;
+    background-color:inherit;
+    font-size:inherit;
+}
+
+.handle-overlay {
+    border: 1px solid white;
+    padding: 2px;
+    position: absolute;
+    width: 1px;
+    z-index: 1000;
+    cursor: crosshair;
+    background-color:Black;
+}
+
+.overlay-handle-decorator {
+    border: 2px solid black;
+    z-index: 1000;
+}
+
+.header-overlay, .cell-overlay, .selection-cell-overlay
+{
+
+    display: block;
+    position: absolute;
+    z-index: 999;
+}
