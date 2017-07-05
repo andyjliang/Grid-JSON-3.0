@@ -26,8 +26,8 @@
 
 		// Build into fresh JSON
 		this.buildJSONDimensions();
-		this.buildJSONOptions();
-		this.buildJSONData();
+		this.buildJSONOptions();	
+		this.buildJSONCells();
 
 		// Finished JSON to return
 		return this.JSON;
@@ -41,7 +41,7 @@
 				"RowDimensions":[],
 				"POVDimensions":[]
 			},
-			"Data": null,
+			"Cells": null,
 			"Options": {}
 		}
 	}
@@ -77,47 +77,47 @@
 		}
 	}
 
-	// Build Data within the new JSON
-	XMLParser.prototype.buildJSONData = function() {
+	// Build Cells within the new JSON
+	XMLParser.prototype.buildJSONCells = function() {
 
 		// Retrieve all the necessary SmartView array fields
 		let vals = this.digestSmartViewArray("vals");
 		let types = this.digestSmartViewArray("types");
 		let statuses = this.digestSmartViewArray("status");
 		let txts = this.digestSmartViewArray("txts");
-		let dataFormat = this.digestSmartViewArray("dataFormat");
+		let cellsFormat = this.digestSmartViewArray("dataFormat");
 		let cellsColor = this.digestSmartViewArray("cellsColor");
 		let cellsToolTip = this.digestSmartViewArray("cellsToolTip");
 		let enumId = this.digestSmartViewArray("enumId");
 		let dropDownId = this.digestSmartViewArray("dropDownId");
 
 		let generations = this.digestSmartViewArray("generations");
-		let parents = this.digestSmartViewArray("parents");
+		let parents = this.digestSmartViewArray("parents")
+;
 
-
-		// Get the width and height of the data matrix
-		let numberOfColumns = this.JSON.Options.columns;
-		let numberOfRows = this.JSON.Options.rows;
+		// Get the width and height of the cells matrix
+		let numberOfColumns = this.JSON.Options.numberOfColumns;
+		let numberOfRows = this.JSON.Options.numberOfRows;
 
 		// Get number of row and column headers 
 		let numberOfColumnHeaders = this.JSON.Dimensions.ColumnDimensions.length;
 		let numberOfRowHeaders = this.JSON.Dimensions.RowDimensions.length;
 
 		// Create the matrix of objects
-		this.JSON.Data = Array.apply(null, Array(numberOfRows)).map(function() {
+		this.JSON.Cells = Array.apply(null, Array(numberOfRows)).map(function() {
             return Array.apply(null, Array(numberOfColumns)).map(function() {
                 return null
             })
         });
 
-		let data = this.JSON.Data;
+		let cells = this.JSON.Cells; // [][]
 
 		// Process Generation and Parent Hash Maps
-		let generationsHashMap = this.generateHashMapFromDigestedArray(generations);
-		let parentsHashMap = this.generateHashMapFromDigestedArray(parents, true, numberOfColumns, numberOfRowHeaders)
-
+		// let generationsHashMap = this.generateHashMapFromDigestedArray(generations);
+		// let parentsHashMap = this.generateHashMapFromDigestedArray(parents, true, numberOfColumns, numberOfRowHeaders)
+		// debugger;
 		// Set the variables for iterations
-		let ordinal, isInRowHeader, isInColumnHeader, isInNonHeaderRegion, isInHeaderRegion, dataCell;
+		let ordinal, isInRowHeader, isInColumnHeader, isInNonHeaderRegion, isInHeaderRegion, cell;
 
 		// Iterate through whole matrix to populate each object with the SmartView array fields 
 		for (let rowIndex = 0; rowIndex < numberOfRows; rowIndex++) {
@@ -138,47 +138,78 @@
 
 				// check if is in header region
 				
-				data[rowIndex][columnIndex] = (isInHeaderRegion) ? 
-					{
+				cell = {
 						val: vals[ordinal],
-						txt: txts[ordinal]
-					} :
-					{
-						val: vals[ordinal],
-						type: types[ordinal],
+						type: +types[ordinal],
 						status: statuses[ordinal],
 						txt: txts[ordinal],
-						dataFormat: dataFormat[ordinal],
+						cellsFormat: cellsFormat[ordinal],
 						cellsColor: cellsColor[ordinal],
 						cellsToolTip: cellsToolTip[ordinal],
 						enumId: enumId[ordinal],
-						dropDownId: dropDownId[dropDownId]
+						dropDownId: dropDownId[dropDownId],
+						ordinal: ordinal,
+						rowIndex: rowIndex,
+						columnIndex: columnIndex
 					}
 
 
-				// checker for if header data cell has generation or parent associated with it
-				if (isInHeaderRegion) {
-
-					// Set generation in 
-					this.setHashMapMetadata(data[rowIndex][columnIndex], generationsHashMap, ordinal, "generation");
-
-					this.setHashMapMetadata(data[rowIndex][columnIndex], parentsHashMap, ordinal, "parent");
-
+				if (isInColumnHeader) {
+					cells[rowIndex][columnIndex] = new SlickColumnHeaderCell(cell);
+				} else if (isInRowHeader) {
+					cells[rowIndex][columnIndex] = new SlickRowHeaderCell(cell);
+				} else {
+					cells[rowIndex][columnIndex] = new SlickDataCell(cell);
 				}
+
+				
+
+
+					// // Set generation in 
+					// this.setHashMapMetacells(cells[rowIndex][columnIndex], generationsHashMap, ordinal, "generation");
+
+					// this.setHashMapMetacells(cells[rowIndex][columnIndex], parentsHashMap, ordinal, "parent");
+
+				
 
 			}
 
+		} 
+
+		// post process generations and parents
+		
+		for (let i = 0, gen, indexes; i < generations.length; i++) {
+			gen = generations[i].split('=');
+			indexes = this.calculateMatrixIndex(gen[0], numberOfColumns);
+
+			console.log(indexes)
+
+			cells[indexes[0]][indexes[1]].generation = +gen[1];
+		}
+
+		for (let i = 0, par, parentIndexes, childIndexes; i < parents.length; i++) {
+			par = parents[i].split('=');
+			
+			childIndexes = this.calculateMatrixIndex(par[0], numberOfColumns);
+			parentIndexes = this.calculateMatrixIndex(par[1], numberOfColumns);
+
+			cells[parentIndexes[0]][parentIndexes[1]].parent = cells[childIndexes[0]][childIndexes[1]];
+			cells[childIndexes[0]][parentIndexes[1]].parent = cells[childIndexes[0]][childIndexes[1]];
 		}
 		
 	}
 
-	// Set metadata from hashmap
-	XMLParser.prototype.setHashMapMetadata = function(dataCell, hashmap, ordinal, metadataName) {
-		ordinal += 1;
-		if (ordinal in hashmap) {
-			dataCell[metadataName] = hashmap[ordinal];
-		}
+	XMLParser.prototype.setHashMap = function(cells, hashmap) {
+		
 	}
+
+	// Set metacells from hashmap
+	// XMLParser.prototype.setHashMapMetacells = function(cell, hashmap, ordinal, metacellsName) {
+	// 	ordinal += 1;
+	// 	if (ordinal in hashmap) {
+	// 		cell[metacellsName] = hashmap[ordinal];
+	// 	}
+	// }
 
 	// Check if is in Column Header
 	XMLParser.prototype.isInColumnHeader = function(rowIndex, numberOfColumnHeaders) {
@@ -233,6 +264,9 @@
 		return numberOfColumns * rowIndex + columnIndex - numberOfRowHeaders;
 	}
 
+	XMLParser.prototype.calculateMatrixIndex = function(ordinal, numberOfColumns) {
+		return [Math.floor(ordinal/numberOfColumns), ordinal%numberOfColumns];
+	}
 
 	// Build Options within the new JSON
 	XMLParser.prototype.buildJSONOptions = function() {
@@ -253,6 +287,23 @@
 
 		// Filling for the preferences section
 		this.buildMapFromXMLElement("preferences", options, "children");
+
+		this.JSON.Options = new SlickOptions({
+			formId: options.name.formId,
+			cube: options.cube,
+			formatSetting: options.preferences.FormatSetting.val,
+			errorLabelText: options.preferences.errorLabelText.val,
+			isPageMemberIndent: (options.preferences.pageMemberIndent.val == "0"),
+			isRepeatMemberLabelsInForms: (options.preferences.repeatMemberLabelsInForms.val == "0"),
+			isMassAllocate: (options.properties.massAllocate == "0"),
+			formName: options.name.displayName,
+			numberOfColumns: options.columns,
+			numberOfRows: options.rows,
+			gridType: +options.gridType,
+			maxPrecision: 0,
+			minPrecision: 0,
+			aliasTableName: options.preferences.val
+		})
 	}
 
 	// Check if XML response is an exception
@@ -279,7 +330,7 @@
 
 		// If there is attribute name passed, look for the attribute text content within that field
 		if (attributeName) {
-			return this.xmlDocument.getElementsByTagName(fieldName)[0].attributes.item(attributeName).textContent;
+			return this.xmlDocument.getElementsByTagName(fieldName)[0].attributes[attributeName].textContent;
 		}
 
 		return this.xmlDocument.getElementsByTagName(fieldName)[0].textContent;

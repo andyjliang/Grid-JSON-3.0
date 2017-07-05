@@ -34,18 +34,7 @@ var REGION_OF_INTEREST_SELECTED = {
     POV: 4 // Focused in POV
 };
 
-// Grid Properties
-var ROW_HEIGHT_MEDIUM = 0;
-var ROW_HEIGHT_CUSTOM = 1;
 
-const COLUMN_WIDTH_SMALL = 0;
-const COLUMN_WIDTH_MEDIUM = 1;
-const COLUMN_WIDTH_LARGE = 2;
-const COLUMN_WIDTH_CUSTOM = 3;
-
-const COLUMN_WIDTH_SMALL_SIZE = 50;
-// Medium width size is column defaults
-const COLUMN_WIDTH_LARGE_SIZE = 300;
 
 // Data Types 
 const DATA_TYPE_UNSPECIFIED = 0;
@@ -92,10 +81,25 @@ const HAS_FORMULA = 262144;
 const IS_DRILLABLE = 524288;
 const IS_SCALAR = 1048576; // 
 
-const DEFAULT_NUM_ROWS = 400;
-const DEFAULT_NUM_COLUMNS = 30;
+// Grid Defaults
+
+const DEFAULT_NUM_ROWS = 25;
+const DEFAULT_NUM_COLUMNS = 15;
 const COLUMN_MIN_WIDTH = 10;
 const STANDARD_ROW_HEIGHT = 25;
+
+
+var ROW_HEIGHT_MEDIUM = 0;
+var ROW_HEIGHT_CUSTOM = 1;
+
+const COLUMN_WIDTH_SMALL = 0;
+const COLUMN_WIDTH_MEDIUM = 1;
+const COLUMN_WIDTH_LARGE = 2;
+const COLUMN_WIDTH_CUSTOM = 3;
+
+const COLUMN_WIDTH_SMALL_SIZE = 50;
+const COLUMN_WIDTH_MEDIUM_SIZE = 100;
+const COLUMN_WIDTH_LARGE_SIZE = 300;
 
 // Key Codes
 const KEY_CODE_TAB = 9;
@@ -113,6 +117,12 @@ const KEY_CODE_A = 65;
 const KEY_CODE_Y = 89;
 const KEY_CODE_Z = 90;
 
+// String constants
+const STR_ENUM_ICON = "<TextNode textContent=''></TextNode><img id='arrow_down' src='/HyperionPlanning/Images/arrow_down.png' style='position:absolute;right:5px;padding:5px;display:none;' align='right'>";
+const STR_PARENT_MEMBER_HEADER_INDENT = "&nbsp&nbsp&nbsp";
+const IMGURL_EXPANDED = "../skins/images/dim-editor/discloseexpanded_16x_ena.png"
+const IMGURL_COLLAPSED = "../skins/images/dim-editor/disclosecollapsed_16x_ena.png";
+
 (function($) {
     // Slick.Grid
     $.extend(true, window, {
@@ -123,31 +133,25 @@ const KEY_CODE_Z = 90;
 
     // shared across all grids on the page
     var scrollbarDimensions;
-    var maxSupportedCssHeight; // browser's breaking point
+    var maxSupportedCssHeight; 
 
-    //////////////////////////////////////////////////////////////////////////////////////////////
-    // SlickGrid class implementation (available as Slick.Grid)
+    function SlickGrid(container, dimensions, cells, options) {
 
-    /**
-     * Creates a new instance of the grid.
-     * @class SlickGrid
-     * @constructor
-     * @param {Node}              container   Container node to create the grid in.
-     * @param {Array,Object}      data        An array of objects for databinding.
-     * @param {Array}             columns     An array of column definitions.
-     * @param {Object}            options     Grid options.
-     **/
-    function SlickGrid(container, headers, cells, options) {
+        validateParameters(container, dimensions, cells, options);
 
-        var rowHeight = {}; // To support custom/hidden rows
-        var rowArray = {};
-        rowArray.rows = {};
+        /// Global Slick Grid Variables
+        var numberOfRowHeaders = dimensions.RowDimensions.length;
+        var numberOfColumnHeaders = dimensions.ColumnDimensions.length;
+        var numberOfRows = options.numberOfRows;
+        var numberOfColumns = options.numberOfColumns;
 
-        validateJSON(container, headers, cells, options);
-        // parse the row strings into cells - with ^ & | as delimiters
-        if (typeof cells[0] == "string") {
-            cells = parseJSONCells(cells);
+        // Copy of original cells
+        var originalCells = [];
+        for (let i = 0; i < cells.length; i++) {
+            originalCells[i] = cells[i].slice(0);
         }
+
+
         $(container).data("grid", this);
 
         var editedCellsToCommit = {};
@@ -166,51 +170,21 @@ const KEY_CODE_Z = 90;
         ];
         const PADDING_WIDTH = (options.isReport) ? 0 : 5;
 
-        // settings
+        // global defaults
         var defaults = {
-            explicitInitialization: false,
-            rowHeight: STANDARD_ROW_HEIGHT,
-            enableAddRow: false,
-            leaveSpaceForNewRows: false,
             editable: (isReport) ? false : true,
-            autoEdit: true,
-            enableCellNavigation: true,
-            enableColumnReorder: false,
-            asyncEditorLoading: false,
-            asyncEditorLoadDelay: 100,
-            enableAsyncPostRender: false,
-            asyncPostRenderDelay: 50,
-            editorLock: Slick.GlobalEditorLock,
-            showHeaderRow: false,
-            headerRowHeight: STANDARD_ROW_HEIGHT,
-            //            showTopPanel: false,
-            //            topPanelHeight: 25,
-            formatterFactory: null,
-            editorFactory: null,
-            cellFlashingCssClass: "flashing",
-            selectedCellCssClass: "selected",
-            multiSelect: true,
-            enableTextSelectionOnCells: false,
-            dataItemColumnValueExtractor: null,
-            fullWidthRows: false,
-            multiColumnSort: false,
-            defaultFormatter: defaultFormatter,
-            forceSyncScrolling: false,
-            addNewRowCssClass: "new-row",
-            paddingWidth: PADDING_WIDTH
+            paddingWidth: PADDING_WIDTH, 
+            collapsedRowHeaderCache: {}
         };
 
         var columnDefaults = {
-            name: "",
-            sortable: false,
-            minWidth: 0,
-            rerenderOnResize: false,
-            headerCssClass: null,
-            defaultSortAsc: true,
-            focusable: true,
-            selectable: true,
-            width: 100
+            width: COLUMN_WIDTH_MEDIUM_SIZE
         };
+
+        var rowDefaults = {
+            height: STANDARD_ROW_HEIGHT
+        };
+
 
         if (options.row_height == ROW_HEIGHT_CUSTOM) {
             try {
@@ -232,43 +206,12 @@ const KEY_CODE_Z = 90;
             }
         }
 
+        // Process matrix:
+        // 1) create columns object
+        // 2) apply dummy padding cells
+        // 3) set column and row spans
+        preprocess();
 
-
-        options = $.extend({}, defaults, options);
-
-        // var membersMap = {};
-        var DataOrigin_c = options.DataOrigin_c; // number of row headers
-        var DataOrigin_r = options.DataOrigin_r; // number of column headers
-        var viewport2Width = DataOrigin_c * columnDefaults.width;
-        var containerH = $(container).height();
-        var containerW = $(container).width();
-        var minNumRows = options.minNumRows || Math.floor(containerH / defaults.rowHeight) - options.DataOrigin_c;
-        var minNumCols = options.minNumCols || Math.floor(containerW / columnDefaults.width);
-        var hasDummyRows = options.nRows < minNumRows;
-        var hasDummyCols = options.nCols < minNumCols;
-        var numRows = (hasDummyRows) ? minNumRows : options.nRows;
-        var numCols = (hasDummyCols) ? minNumCols : options.nCols;
-
-        // Essential data structures for the grid
-        var data, RHdata, $cells, columns;
-
-        // URLs for image files
-        IMGURL_EXPANDED = "../skins/images/dim-editor/discloseexpanded_16x_ena.png"
-        IMGURL_COLLAPSED = "../skins/images/dim-editor/disclosecollapsed_16x_ena.png";
-
-        var collapsedRowHeaderCache = {};
-
-        // Creating dummy cells for viewport if datasource's columns not enough
-        var dummyCells = {};
-        for (var i = Object.keys(cells[0]).length; i < minNumCols; i++) {
-            dummyCells[i] = {
-                value: ""
-            };
-        }
-        // iterated strings for parsing
-        // var STR_ENUM_ICON = "<img id='arrow_down' src='/static/css/images/arrow_down.png' style='position:absolute;right:5px;padding:5px;display:none;' align='right'>";
-        var STR_ENUM_ICON = "<TextNode textContent=''></TextNode><img id='arrow_down' src='/HyperionPlanning/Images/arrow_down.png' style='position:absolute;right:5px;padding:5px;display:none;' align='right'>";
-        var STR_PARENT_MEMBER_HEADER_INDENT = "&nbsp&nbsp&nbsp";
 
         var isReport = options.isReport || false;
         var isDisplayGridlines = (options.isDisplayGridlines != null) ? options.isDisplayGridlines : true;
@@ -327,412 +270,6 @@ const KEY_CODE_Z = 90;
         }
 
         setRuntimeStyleSheet(); //Fix for : HSF Reports inherit styles from account view 
-        processDataStructures();
-
-        function processDataStructures() {
-
-            /// Removing any unwanted styles
-            var style = document.createElement("style");
-            style.appendChild(document.createTextNode(""));
-            document.head.appendChild(style);
-            if (typeof alreadyAddedLabelRows !== "undefined") {
-                alreadyAddedLabelRows.clear();
-            }
-
-            /// Initiated rows and columns 
-            var numCollapsedRows = 0;
-            var rowsToCollapse = [];
-            var colsToCollapse = [];
-            // Recursive looping to create columns array of column object write dummy column headers
-            var mbrIdArr = [];
-            DataOrigin_c = options.DataOrigin_c; // number of column headers
-            DataOrigin_r = options.DataOrigin_r; // number of row headers
-            viewport2Width = DataOrigin_c * columnDefaults.width;
-            containerH = $(container).height();
-            containerW = $(container).width();
-            minNumRows = options.minNumRows || Math.floor(containerH / defaults.rowHeight) - options.DataOrigin_c;
-            minNumCols = options.minNumCols || Math.floor(containerW / columnDefaults.width);
-            if (options.isReport) {
-                setMinrowsMincols();
-            }
-            hasDummyRows = options.nRows < minNumRows;
-            hasDummyCols = options.nCols < minNumCols;
-            numRows = (hasDummyRows) ? minNumRows : options.nRows;
-            numCols = (hasDummyCols) ? minNumCols : options.nCols;
-
-            columns = Array.apply(null, Array(DataOrigin_c)).map(function() {
-                return addColumn(-1);
-            });
-            if (options.gridType == IS_HSF_GRID) {
-                columns[0].width = (initialized) ? $(".hr0.header").width() + PADDING_WIDTH * 2 : 190;
-                columns[1].width = (initialized) ? $(".hr1.header").width() + PADDING_WIDTH * 2 : 200;
-            } else if (options.gridType == IS_DIM_EDITOR_GRID) {
-                columns[0].width = (initialized) ? $("#dimEditorGrid .hr0.header").width() + PADDING_WIDTH*2: 200;
-            }
-
-            // coursing through segments 
-
-            var iCCount = 0,
-                iCRef = 0;
-            recurseColHeaders_a(headers.HspSlickColumnHeaders[0], 0, [], [], [], []);
-            if (headers.HspSlickColumnHeaders.length > 1) {
-                var columns_copy = columns.slice(DataOrigin_c);
-                for (i = 0; i < headers.HspSlickColumnHeaders.length - 1; i++) {
-                    columns.push.apply(columns, columns_copy);
-                }
-            }
-
-            RHdata = Array.apply(null, Array(numRows)).map(function() {
-                return Array.apply(null, Array(DataOrigin_c)).map(function() {
-                    return {}
-                })
-            });
-
-            // Building row headers coursing through segments 
-            var rowNumArr = Array.apply(null, Array(DataOrigin_c)).map(function() {
-                return -1;
-            });
-            var mbrIdArr = [];
-            var mbrIdArr_copy, currInstance, cell, mbrInstances;
-            var rowTrack = 0;
-            // specifically for hsf add child functionality
-            var acctTrack = 0;
-            recurseRowHeaders_a(headers.HspSlickRowHeaders[0], 0);
-            if (headers.HspSlickRowHeaders.length > 1) {
-                var RHdata_copy = RHdata.slice();
-                for (i = 0; i < headers.HspSlickRowHeaders.length - 1; i++) {
-                    RHdata.push.apply(RHdata, RHdata_copy);
-                }
-            }
-
-            var sliceLength = Math.max(minNumRows, cells.length - rowsToCollapse.length + 1);
-            RHdata = RHdata.slice(0, sliceLength);
-
-            data = [];
-            if (options.isReport) {
-                data.getItemMetadata = function(row) {
-                    if (!$.isEmptyObject(rowHeight)) {
-                        rowArray.rows = rowHeight;
-                        return rowArray;
-                    }
-                };
-            }
-
-            var numOfCols = Object.keys(cells[0]).length;
-            var numOfRows = cells.length;
-            nDummyCols = minNumCols - (numOfCols - colsToCollapse.length);
-            nDummyRows = minNumRows - (cells.length - rowsToCollapse.length);
-
-            var ij, j, ji, jj, currColToCollapse, nCurrCols, nCurrRows, nDummyCols;
-            for (i = 0, ij = 0; i < cells.length; i++) {
-
-                if (i === rowsToCollapse[0]) {
-                    rowsToCollapse.shift();
-                    continue;
-                }
-                if (colsToCollapse.length > 0) {
-                    currColToCollapse = colsToCollapse.slice();
-                    data[ij] = {};
-                    for (j = 0, ji = 0; j < numOfCols; j++) {
-                        if (j === currColToCollapse[0]) {
-                            currColToCollapse.shift();
-                            continue;
-                        }
-                        data[ij][ji] = cells[i][j];
-                        ji++;
-                    }
-                } else {
-                    data[ij] = $.extend({}, cells[i]);
-                }
-
-                if (nDummyCols > 0) {
-                    dummyCells = {};
-                    nCurrCols = Object.keys(data[ij]).length;
-                    for (jj = nCurrCols; jj < minNumCols; jj++) {
-                        dummyCells[jj] = {
-                            value: ""
-                        };
-                    }
-                    $.extend(data[ij], dummyCells);
-                }
-
-                ij++;
-            }
-
-            if (nDummyRows > 0) {
-                // nCurrRows = data.length - rowsToCollapse.length;
-                dummyCells = {};
-                for (jj = 0; jj < Object.keys(data[0]).length; jj++) {
-                    dummyCells[jj] = {
-                        value: ""
-                    };
-                }
-                for (i = data.length; i < minNumRows; i++) {
-                    data[i] = $.extend({}, dummyCells);
-                }
-            }
-
-            if (nDummyCols > 0) {
-                for (var i = columns.length; i < minNumCols; i++) {
-                    columns.push(addColumn(iCCount));
-                    iCCount++;
-                }
-            }
-
-            function recurseRowHeaders_a(dim, iDim, isCollapsed) {
-                recurseRowHeaders_b(dim.members, 0, (isCollapsed) ? isCollapsed : false);
-
-                function recurseRowHeaders_b(members, nL, isCollapsed) {
-
-                    for (var i in members) {
-
-                        /// Check if should add to row
-                        mbrIdArr_copy = mbrIdArr.slice();
-                        mbrIdArr_copy[iDim] = members[i].mbrId;
-                        var currInstance = members[i].mbrInstances[mbrIdArr_copy.slice(0, iDim + 1)];
-
-                        if (currInstance != undefined) {
-                            recurseRowHeaders_c(members[i]);
-                            if (options.isReport) {
-                                if (members[i] && members[i].header_style && members[i].header_style.zeroRowHeight) {
-                                    rowHeight[parseInt(i)] = {};
-                                    rowHeight[parseInt(i)].height = 0;
-                                }
-                            }
-
-                            if (members[i].children.length > 0) {
-                                if (dim.subDimension != null) recurseRowHeaders_a(dim.subDimension, iDim + 1, isCollapsed);
-                                recurseRowHeaders_b(members[i].children, nL + 1, isCollapsed || ((currInstance & IS_COLLAPSED) > 0));
-                                continue;
-                            }
-                        } else if (Object.keys(members[i].mbrInstances)[0].split(',').length > iDim + 1) {
-                            var rowInstances = Object.keys(members[i].mbrInstances);
-                            var rowMbrInstances;
-                            var iInst = 0;
-
-                            recurseRowHeaders_c(rowInstances[0].split(',')[0], true, true);
-                            for (var rI = 0; rI < rowInstances.length; rI++) {
-                                rowMbrInstances = rowInstances[rI].split(',');
-                                iInst = 1;
-                                recurseRowHeaders_c(rowMbrInstances.slice(1).join(','), true); // Bug 25505354 - ACCT V1100 DESCRIPTION DOES NOT MATCH BETWEEN SMARTVIEW AND CLOUD 
-                            }
-                            if (members[i].children.length > 0) {
-                                recurseRowHeaders_b(members[i].children, nL + 1, isCollapsed || ((members[i].status & IS_COLLAPSED) > 0));
-                                continue;
-                            }
-                        }
-                        if (dim.subDimension != null) recurseRowHeaders_a(dim.subDimension, iDim + 1, isCollapsed);
-                    }
-
-                    function recurseRowHeaders_c(m, isRowInstance) {
-
-                        // Separating flow for Strategic Modeling
-                        var tempAcctTrack = acctTrack;
-                        if (isRowInstance && +iInst > 0) {
-                            if (isCollapsed) rowsToCollapse.push(acctTrack);
-                            acctTrack++; //Bug 25489552 - SUBACCOUNTS: ADDING A CHILD TO V1000 INSTEAD ADDS IT TO V2005. 
-
-                        }
-
-                        if (isCollapsed) { //commenting below code because isNotRow throwing null error
-                            if (options.gridType != IS_HSF_GRID) rowsToCollapse.push(rowTrack);
-                            rowTrack++;
-                            return;
-                        }
-
-                        var iCurrDim = (isRowInstance) ? +iInst : iDim;
-                        mbrIdArr[iCurrDim] = (isRowInstance) ? m : m.mbrId;
-                        mbrInstances = mbrIdArr.slice(0, iCurrDim + 1);
-                        isBaseDim = iCurrDim == DataOrigin_c - 1;
-                        if (isBaseDim) {
-                            rowTrack++;
-                            rowNumArr[iCurrDim] = rowNumArr[iCurrDim] + 1;
-                            for (var j = 0; j < DataOrigin_c - 1; j++) {
-                                RHdata[rowNumArr[j]][j].size = RHdata[rowNumArr[j]][j].size + 1;
-                            }
-                        } else {
-                            rowNumArr[iCurrDim] = rowNumArr[DataOrigin_c - 1] + 1;
-                        }
-
-                        cell = RHdata[rowNumArr[iCurrDim]][iCurrDim];
-
-                        // populating the header cells
-                        $.extend(
-                            cell, {
-                                status: (isRowInstance) ? ((iInst == 0) ? 0 : members[i].mbrInstances[rowInstances[rI]]) : m.mbrInstances[mbrInstances],
-                                value: (isRowInstance) ? m : (m.displayName || m.mbrId),
-                                hasChildren: (isRowInstance) ? members[i].children.length > 0 : m.children.length > 0,
-                                isExpanded: (isRowInstance) ? !((members[i].status & IS_COLLAPSED) > 0) : !((m.mbrInstances[mbrInstances] & IS_COLLAPSED) > 0),
-                                nL: nL,
-                                mbr: members[i],
-                                mbrInst: mbrInstances,
-                                size: 0,
-                                style: {}
-                            }
-                        );
-
-
-                        if (options.gridType == IS_HSF_GRID) {
-                            cell.acctTrack = tempAcctTrack;
-                            if (members[i].status) cell.status = members[i].status;
-                        }
-
-                        // adding custom styles
-
-                        try {
-                            if (!isRowInstance) {
-                                $.extend(cell['style'], dim.header_style);
-                                $.extend(cell['style'], m.header_style);
-                                if (m.header_style && m.header_style.rowspan) {
-                                    cell.size += m.header_style.rowspan;
-                                    for (var ii = 0; ii < m.header_style.rowspan; ii++) {
-                                        RHdata.push(Array.apply(null, Array(DataOrigin_c)).map(function() {
-                                            return {
-                                                value: ""
-                                            }
-                                        }));
-                                    }
-                                    rowNumArr[0] = rowNumArr[0] + m.header_style.rowspan - 1;
-                                }
-                                if (m.cells_style && $.isArray(m.cells_style)) {
-                                    var ii = rowNumArr[0]
-                                    for (var k = 0; k < m.cells_style.length; k++, ii++) {
-                                        addCSSRule(m.cells_style[k], ".row" + ii, style);
-                                    }
-                                }
-                            }
-                        } catch (e) {
-                            console.log(e);
-                        }
-
-                    }
-                }
-            }
-
-            function recurseColHeaders_a(currDim, iCurrDim, names, bExpanded, bHasChildren, bStatuses, isShown) {
-                for (var iMember = 0; iMember < currDim.members.length; iMember++) {
-                    recurseColHeaders_b(currDim.members[iMember], iCurrDim, 0, (typeof isShown == "boolean") ? isShown : true);
-                }
-
-                if (currDim.spans_style) {
-                    addCSSRule(currDim.spans_style, "#headers" + iCurrDim + " span", style);
-                }
-
-                function recurseColHeaders_b(currMem, iCurrDim, iCurrMem, isShown) {
-
-                    mbrIdArr[iCurrDim] = currMem.mbrId;
-                    var isMbrExpanded = !((currMem.mbrInstances[mbrIdArr.slice(0, iCurrDim + 1) + ""] & IS_COLLAPSED) > 0);
-                    bExpanded[iCurrDim] = isShown && isMbrExpanded;
-                    bStatuses[iCurrDim] = currMem.mbrInstances[mbrIdArr.slice(0, iCurrDim + 1)];
-                    bHasChildren[iCurrDim] = currMem.children.length > 0;
-                    names[iCurrDim] = (currMem.displayName) ? currMem.displayName : currMem.mbrId;
-                    if (currDim.subDimension != null) {
-                        recurseColHeaders_a(currDim.subDimension, iCurrDim + 1, names, bExpanded, bHasChildren, bStatuses, isShown);
-                    }
-                    recurseColHeaders_c(bHasChildren[iCurrDim], bExpanded[iCurrDim], isShown);
-                    if (bHasChildren[iCurrDim]) {
-                        for (var iChild = 0; iChild < currMem.children.length; iChild++) {
-                            recurseColHeaders_b(currMem.children[iChild], iCurrDim, iCurrMem + 1, isMbrExpanded);
-                        }
-                    }
-
-
-                    function recurseColHeaders_c(isBHasChildren, isExpanded, isShown) {
-                        mbrIdArr[iCurrDim] = currMem.mbrId;
-                        bExpanded[iCurrDim] = isExpanded;
-                        bStatuses[iCurrDim] = currMem.mbrInstances[mbrIdArr.slice(0, iCurrDim + 1)];
-                        bHasChildren[iCurrDim] = isBHasChildren;
-                        names[iCurrDim] = (currMem.displayName) ? currMem.displayName : currMem.mbrId;
-                        try {
-                            if (currMem.cells_style) {
-                                style = addCSSRule(currMem.cells_style, ".l" + iCCount + ":not(.header)", style);
-                            }
-                        } catch (e) {
-                            console.log(e);
-                        }
-                        var hasInstance = (currMem.mbrInstances[mbrIdArr.slice(0, iCurrDim + 1)] != undefined)
-                        var notInColsToCollapse = colsToCollapse.indexOf(iCRef) < 0;
-                        var isBaseDim = iCurrDim == DataOrigin_r - 1;
-
-                        if (!isShown && hasInstance && notInColsToCollapse) colsToCollapse.push(iCRef);
-                        if (isBaseDim && hasInstance) {
-                            if (isShown && notInColsToCollapse) {
-                                columns.push(addColumn(iCCount, names, bExpanded, bHasChildren, bStatuses));
-                                if (currMem.header_style) {
-                                    if (isReport && currMem.header_style.width != null) { // HSF reports -Fix to set 0px width for columns
-                                        columns[columns.length - 1].width = currMem.header_style.width;
-                                        if (options.isReport && columns[columns.length - 1].width >= 10)
-                                            columns[columns.length - 1].width += 10; // 10Px added to adjust the width for borders bug25248075 
-                                    } else {
-                                        if (currMem.header_style.width) {
-                                            columns[columns.length - 1].width = currMem.header_style.width;
-                                        }
-                                    }
-                                    if (currMem.header_style.fontColor) {
-                                        columns[columns.length - 1].fontColor = currMem.header_style.fontColor;
-                                    }
-                                }
-                                iCCount++;
-                            }
-                            iCRef++;
-                        }
-                    }
-                }
-            };
-
-            function addColumn(i, parentColumns, expanded, hasChildren, bStatuses) {
-                return (parentColumns == undefined) ? {
-                    "id": i,
-                    "hashCodes": "" + i
-                } : {
-                    "field": i,
-                    "id": i,
-                    "name": parentColumns.slice(),
-                    "expanded": expanded.slice(),
-                    "hasChildren": hasChildren.slice(),
-                    "hashCodes": mbrIdArr.slice(),
-                    "statuses": bStatuses.slice()
-                }
-            };
-
-            if (options.gridType == IS_HSF_GRID) {
-                columns[0].hashCodes = ["HSF_Expand_All"];
-                columns[1].hashCodes = ["HSF_Account_Names"];
-            }
-        }
-
-        function parseJSONCells(unparsedCells, addDummyCells) {
-            for (var i = 0; i < unparsedCells.length; i++) {
-                unparsedCells[i] = unparsedCells[i].split('^');
-                unparsedCells[i] = unparsedCells[i].reduce(function(o, v, j) {
-                    var a = v.split('|');
-                    var unFormattedCellVal = a[0];
-                    if (options.isReport) {
-                        if (isNaN(a[0].replace("%", "").replace("$", "").replace(",", ""))) {
-                            unFormattedCellVal = a[0];
-                        } else {
-                            unFormattedCellVal = (a[a.length - 1] != null && a[a.length - 1] != "0.0") ? a[a.length - 1] : a[0];
-                        }
-                    }
-                    o[j] = {
-                        value: (options.isReport && (a[0].trim().charAt(0) == "'")) ? a[0].replace("'", '') : a[0], // Temp fix for bug 25187399 ,
-                        status: +a[1],
-                        types: +a[2],
-                        styleId: a[3],
-                        borderId: a[4],
-                        rowspan: a[5],
-                        colspan: a[6],
-                        mbrFormula: a[7],
-                        precision: a[8],
-                        unformattedVal: unFormattedCellVal, // for hsf reports Bug 25660574
-                        i: i + 'x' + j
-                    };
-                    return o;
-                }, {});
-                if (addDummyCells) $.extend(unparsedCells[i], dummyCells);
-            }
-            return unparsedCells;
-        }
 
         function appendData(moreCells) {
             moreCells = parseJSONCells(moreCells, true);
@@ -749,10 +286,12 @@ const KEY_CODE_Z = 90;
 
 
         function finishChunking() {
-            processDataStructures();
+            
             updateRowCount();
             render();
         }
+
+        var viewport2Width = 0;
 
         // scroller
         var th; // virtual height
@@ -789,7 +328,6 @@ const KEY_CODE_Z = 90;
         var $allHeaderContainer;
         var stylesheet, columnCssRulesL, columnCssRulesR;
         var viewportH, viewportW;
-        var canvasWidth;
         var viewportHasHScroll, viewportHasVScroll;
         var headerColumnWidthDiff = 0,
             headerColumnHeightDiff = 0, // border+padding
@@ -826,7 +364,6 @@ const KEY_CODE_Z = 90;
         var cellCssClasses = {};
 
         var columnsById = {};
-        var sortColumns = [];
         var columnPosLeft = [];
         var columnPosRight = [];
 
@@ -854,8 +391,6 @@ const KEY_CODE_Z = 90;
         var currentFocus = REGION_OF_INTEREST_SELECTED.DEFAULT;
         var newRowlist = "";
 
-        var cellCount = 0;
-        var rowCount = 0;
         var performSlideDown = false;
         //////////////////////////////////////////////////////////////////////////////////////////////
         // Initialization
@@ -870,12 +405,7 @@ const KEY_CODE_Z = 90;
             if (options.isReport)
                 applyWidthFromCache(options, columns)
 
-            setColumns(columns);
-            // validate loaded JavaScript modules against requested options
-            if (options.enableColumnReorder && !$.fn.sortable) {
-
-                throw new Error("SlickGrid's 'enableColumnReorder = true' option requires jquery-ui.sortable module to be loaded");
-            }
+            // setColumns(columns);
 
             editController = {
                 "commitCurrentEdit": commitCurrentEdit,
@@ -921,30 +451,35 @@ const KEY_CODE_Z = 90;
                 ).appendTo($container);
             }
 
-            if (options.columnWidthStates.length) {
-                for (let i = 0; i < options.columnWidthStates.length; i++) {
-                    columns[i].width = options.columnWidthStates[i];
-                }
-            }
-
             $('#rowHeaderScroller')
                 // .bind("contextmenu", handleHeaderContextMenu)
                 .bind("click", handleColumnHeaderClick)
                 .bind("dblclick", handleDblClick)
                 .bind("contextmenu", handleContextMenu)
 
-            for (var i = 0; i < DataOrigin_r; i++) {
-                $headerScroller = $("<div id='scroller" + i + "' class='slick-header ui-state-default' style='overflow:hidden;position:relative;' />")
+            viewport2Width = numberOfRowHeaders * COLUMN_WIDTH_MEDIUM_SIZE;
+
+            if (isReport)
+                viewport2Width = 35;
+            
+
+            viewportWidth = $container.width() - viewport2Width - 1;
+
+            $scrollerContainer = $("<div id='scrollerContainer'/>").appendTo($container);
+            for (var i = 0; i < numberOfColumnHeaders; i++) {
+                $headerScroller = $("<div id='scroller" + i + "' class='slick-header ui-state-default' />")
                     // .bind("contextmenu", handleHeaderContextMenu)
                     .bind("click", handleColumnHeaderClick)
                     .bind("dblclick", handleDblClick)
                     .bind("contextmenu", handleContextMenu)
-                    .appendTo($container);
-                $headers = $("<div id='headers" + i + "' class='slick-header-columns' style='left:-1000px' />").appendTo($headerScroller);
+                    .width(viewportWidth)
+                    .css('left', (viewport2Width-1) + "px")
+                    .appendTo($scrollerContainer);
+                $headers = $("<div id='headers" + i + "' class='slick-header-columns' />").appendTo($headerScroller);
                 $headers.width(getHeadersWidth());
                 allHeaders.push($headers);
             }
-
+            
             $allHeaderScrollers = $(container + " .slick-header");
             $headerRowScroller = $("<div class='slick-headerrow ui-state-default' style='overflow:hidden;position:relative;' />").appendTo($container);
             $headerRow = $("<div class='slick-headerrow-columns' />").appendTo($headerRowScroller);
@@ -953,18 +488,7 @@ const KEY_CODE_Z = 90;
                 .appendTo($headerRowScroller);
             $allHeaderContainer = $(container + " .slick-header-columns:not(#frozen-column)")
 
-            if (!options.showHeaderRow) {
-                $headerRowScroller.hide();
-            }
-
-            viewport2Width = 0;
-            for (var iRowHeader = 0; iRowHeader < DataOrigin_c; iRowHeader++) {
-                viewport2Width += columns[iRowHeader].width;
-            }
-            if (isReport)
-                viewport2Width = 35;
-            
-            viewportWidth = parseFloat($.css($container[0], "width", true)) - viewport2Width - 1;
+            $headerRowScroller.hide();
 
             $viewport2 = $("<div id='row-header-viewport' class='slick-viewport' style='width:" + viewport2Width + "px;overflow:auto;outline:0;position:relative;float:left;'>").appendTo($container);
             $viewport2.css("overflow-y", "hidden");
@@ -975,10 +499,8 @@ const KEY_CODE_Z = 90;
             $canvas2 = $("<div class='grid-canvas2' />").appendTo($viewport2);
             $focusSink2 = $focusSink.clone().appendTo($container);
 
-            if (!options.explicitInitialization) {
-                finishInitialization();
-                $canvas.width(getCanvasWidth() - viewport2Width);
-            }
+            finishInitialization();
+            $canvas.width(getCanvasWidth() - viewport2Width);
         }
 
         function finishInitialization() {
@@ -998,17 +520,13 @@ const KEY_CODE_Z = 90;
                 // all browsers except IE
                 disableSelection($headers); // disable all text selection in header (including input and textarea)
 
-                if (!options.enableTextSelectionOnCells) {
-                    // disable text selection in grid cells except in input and textarea elements
-                    // (this is IE-specific, because selectstart event will only fire in IE)
-                    $viewport.bind("selectstart.ui", function(event) {
-                        return $(event.target).is("input,textarea");
-                    });
-                }
+                $viewport.bind("selectstart.ui", function(event) {
+                    return $(event.target).is("input,textarea");
+                });
+            
 
                 updateColumnCaches();
                 createColumnHeaders();
-                setupColumnSort();
                 createCssRules();
                 resizeCanvas();
                 bindAncestorScrollEvents();
@@ -1043,10 +561,10 @@ const KEY_CODE_Z = 90;
 
                 $('#expand_all_checkbox').click(function(e) {
                     let checked = $(e.target).is(":checked");
-                    for (let mem in collapsedRowHeaderCache) {
-                        collapsedRowHeaderCache[mem].status = collapsedRowHeaderCache[mem].status ^ IS_COLLAPSED;
+                    for (let mem in options.collapsedRowHeaderCache) {
+                        options.collapsedRowHeaderCache[mem].status = options.collapsedRowHeaderCache[mem].status ^ IS_COLLAPSED;
                     }
-                    processDataStructures();
+                    
                     setColumns(columns);
                     invalidate();
                 })
@@ -1069,7 +587,7 @@ const KEY_CODE_Z = 90;
             $cells.removeClass('active selected slick-header-column-active');
             $(this).parent().addClass("slick-header-column-active");
             $headers.children().each(function(i, e) {
-                if (options.gridType == IS_HSF_GRID && i < DataOrigin_c) {
+                if (options.gridType == IS_HSF_GRID && i < numberOfColumnHeaders) {
                     e = $('#frozen-column').children()[i];
                 }
                 $(e).data('column', [columns[i]]);
@@ -1079,7 +597,7 @@ const KEY_CODE_Z = 90;
 
         function column_drag(e, dd) {
             let ic = +$(this).parent().attr('col');
-            let i = +$(this).parent().attr('col') + DataOrigin_c;
+            let i = +$(this).parent().attr('col') + numberOfColumnHeaders;
             let c, selColumnEl, sel;
             let col_offset = 0;
             let isHeaderRule;
@@ -1101,10 +619,10 @@ const KEY_CODE_Z = 90;
 
                 // resizing on data cells
                 isHeaderRule = $canvas2.is(e.currentTarget.parentNode.parentNode.parentNode);
-                let colOffset = (isHeaderRule) ? 0 : DataOrigin_c;
+                let colOffset = (isHeaderRule) ? 0 : numberOfColumnHeaders;
                 i = ic = $(e.currentTarget.parentNode).index();
                 c = columns[i + colOffset];
-                selColumnEl = $('*[col=' + ((isHeaderRule) ? i - DataOrigin_c : i) + ']')[0];
+                selColumnEl = $('*[col=' + ((isHeaderRule) ? i - numberOfColumnHeaders : i) + ']')[0];
             }
 
             // if(isHeaderRule && i == 0) col_offset = 14;
@@ -1133,7 +651,7 @@ const KEY_CODE_Z = 90;
                     "column": columns[parseInt($(e.target).offsetParent().attr("col"))]
                 });
             }
-            options.columnWidthStates[DataOrigin_c + +$(dd.drag.offsetParent).attr("col")] = $(dd.drag.offsetParent).width() + headerColumnWidthDiff;
+            options.columnWidthStates[numberOfColumnHeaders + +$(dd.drag.offsetParent).attr("col")] = $(dd.drag.offsetParent).width() + headerColumnWidthDiff;
         }
 
         function registerPlugin(plugin) {
@@ -1191,40 +709,40 @@ const KEY_CODE_Z = 90;
         }
 
         function getHeadersWidth() {
-            var headersWidth = DataOrigin_c * 100;
-            for (var i = 0, ii = columns.length; i < ii; i++) {
-                var width = columns[i].width;
-                headersWidth += width;
-            }
-            headersWidth += scrollbarDimensions.width;
-            return Math.max(headersWidth, viewportW) + 1000;
+            // var headersWidth = numberOfColumnHeaders * 100;
+            
+            // for (var i = 0, ii = columns.length; i < ii; i++) {
+            //     var width = columns[i].width;
+            //     headersWidth += width;
+            // }
+
+            // headersWidth += scrollbarDimensions.width;
+            // return Math.max(headersWidth, viewportW) + 1000;
+            return cells[0].length * COLUMN_WIDTH_MEDIUM_SIZE;
         }
 
         function getCanvasWidth() {
-            var availableWidth = viewportHasVScroll ? viewportW - scrollbarDimensions.width : viewportW;
-            var rowWidth = 0;
-            var i = columns.length;
-            while (i--) {
-                rowWidth += columns[i].width;
-            }
-            return options.fullWidthRows ? Math.max(rowWidth, availableWidth) : rowWidth;
+            
+            // var availableWidth = viewportHasVScroll ? viewportW - scrollbarDimensions.width : viewportW;
+            // var rowWidth = 0;
+            // var i = columns.length;
+            // while (i--) {
+            //     rowWidth += columns[0][i].width;
+            // }
+            return (numberOfColumns - numberOfRowHeaders) * COLUMN_WIDTH_MEDIUM_SIZE;
         }
 
         function updateCanvasWidth(forceColumnWidthsUpdate) {
-            var oldCanvasWidth = canvasWidth;
-            canvasWidth = getCanvasWidth();
-            if (canvasWidth != oldCanvasWidth) {
-                $canvas.width(canvasWidth - viewport2Width);
-                $headerRow.width(canvasWidth);
-                $headers.width(getHeadersWidth());
-                viewportHasHScroll = (canvasWidth > viewportW - scrollbarDimensions.width);
-            }
+            var canvasWidth = getCanvasWidth();
+
+            $canvas.width(canvasWidth - viewport2Width);
+            $headerRow.width(canvasWidth);
+            $headers.width(getHeadersWidth());
+            viewportHasHScroll = (canvasWidth > viewportW - scrollbarDimensions.width);
+        
 
             $headerRowSpacer.width(canvasWidth + (viewportHasVScroll ? scrollbarDimensions.width : 0));
 
-            // if (canvasWidth != oldCanvasWidth || forceColumnWidthsUpdate) {
-            //     applyColumnWidths();
-            // }
         }
 
         function disableSelection($target) {
@@ -1328,292 +846,63 @@ const KEY_CODE_Z = 90;
             return $header && $header[0];
         }
 
+        function createColumns() {
+            let columns = []; 
+
+            for (let i = 0, columnRow; i < numberOfColumnHeaders; i++){
+
+                columnRow = cells[i].slice(numberOfRowHeaders);
+
+                for (let j = 0; j < columnRow.length; j++) {
+
+                    columnRow[j] = Object.assign(columnRow[j], columnDefaults);
+
+                }
+              
+                columns.push(columnRow);
+
+            }
+
+            return columns;
+        }
+
+        function createColumnHeader(columnCell, $headers) {
+
+            return $("<div class='ui-state-default slick-header-column' />")
+              .html("<span class='slick-column-name'>" + columnCell.displayText + "</span>")
+              .width(columnCell.width - headerColumnWidthDiff)
+              .attr("title", columnCell.toolTip || "")
+              .data("column", columnCell)
+              .appendTo($headers);
+
+        }
+
+
         function createColumnHeaders() {
-            function onMouseEnter() {
-                $(this).addClass("ui-state-hover");
+
+            var columnCreated;
+
+            // create data columns
+            for (let i = 0, columnRow; i < columns.length; i++) {
+
+                columnRow = columns[i];
+                
+                for (let j = 0, columnCell; j < columnRow.length; j++) {
+
+                  columnCell = columnRow[j];
+                  
+                  // Handle column spans
+                  if (j > 0 && columnRow[j-1].value == columnCell.value) {
+                    columnCreated.width( columnCreated.width() + COLUMN_WIDTH_MEDIUM_SIZE)
+                  } else {
+                    columnCreated = createColumnHeader(columnCell, $allHeaderScrollers[i].children[0]);
+                  }
+
+
+                }
+
             }
-
-            function onMouseLeave() {
-                $(this).removeClass("ui-state-hover");
-            }
-            // adding the looping here
-            var currHashCode;
-
-            var columnOrdinal = -1;
-
-            for (var iiC = 0; iiC < DataOrigin_r; iiC++) {
-                columnOrdinal += DataOrigin_c;
-                $headers = allHeaders[iiC];
-                // 
-                $headers.find(".slick-header-column")
-                    .each(function() {
-                        var columnDef = $(this).data("column");
-                        if (columnDef) {
-                            trigger(self.onBeforeHeaderCellDestroy, {
-                                "node": this,
-                                "column": columnDef
-                            });
-                        }
-                    });
-                $headers.empty();
-                $headers.width(getHeadersWidth());
-
-                $headerRow.find(".slick-headerrow-column")
-                    .each(function() {
-                        var columnDef = $(this).data("column");
-                        if (columnDef) {
-                            trigger(self.onBeforeHeaderRowCellDestroy, {
-                                "node": this,
-                                "column": columnDef
-                            });
-                        }
-                    });
-                $headerRow.empty();
-
-                $('#frozen-column').children().each(function(i, c) {
-                    $(c).data('column', [columns[i]]);
-                });
-
-
-
-                for (var i = 0; i < columns.length; i++) {
-                    var m = columns[i];
-                    if (m.field == undefined) {
-                        var colName = "";
-                        $("<div class='ui-state-default slick-header-column'" + ((i < DataOrigin_c) ? " style='z-index:-1;'" : "") + "/>")
-                            .html("<span class='slick-column-name'>" + colName + "</span>")
-                            .attr("col", m.id)
-                            .data("column", [m])
-                            .width((isReport && m.width == 0) ? 0 : ((isReport && m.id == -1) ? 26 : (m.width - headerColumnWidthDiff)))
-                            .appendTo($headers);
-                        if (options.columnWidthStates.length) {
-                            $($("#rowHeaderScroller").find(".slick-header-column")[i]).width(m.width - headerColumnWidthDiff);
-                        }
-                        continue;
-                    }
-
-                    columnOrdinal++;
-
-                    if (m.hashCodes.indexOf(undefined) < 0 && m.hashCodes.length > 0) {
-                        if (currHashCode != m.hashCodes.slice(0, iiC + 1) + "") {
-                            currHashCode = m.hashCodes.slice(0, iiC + 1) + "";
-                        } else if (m.name[iiC] == header.text().trim()) {
-                            header.width(header.width() + m.width);
-                            header.data().column.push(m);
-                            continue;
-                        }
-                    }
-
-                    var name = (m.name[iiC]) ? m.name[iiC] : '';
-                    var expandCollapseIconStr = "";
-
-                    if (m.statuses.length > 0) {
-
-                        var status = m.statuses[iiC];
-                        m.headerCssClass = (m.headerCssClass) ? m.headerCssClass : "";
-                        m.columnCssClass = (m.columnCssClass) ? m.columnCssClass : "";
-                        // Go through stylings
-                        if ((status & IS_BOLD_HEADER) != 0) {
-                            m.headerCssClass += " bold";
-                            m.columnCssClass += " bold";
-                        }
-                        if ((status & IS_ACTUAL) != 0) {
-                            m.headerCssClass += " actual";
-                            m.columnCssClass += " actual";
-                        }
-                        if ((status & IS_FORECAST_METHOD) != 0) {
-                            m.headerCssClass += " forecast-method";
-                        }
-
-                        // Check for parent - child hierarchy
-                        if (m.hasChildren[iiC]) {
-                            m.headerCssClass += " header-parent";
-                            m.columnCssClass += " header-parent";
-                            if (m.expanded[iiC]) {
-                                expandCollapseIconStr = "<img func='collapseExpand' src='" + IMGURL_EXPANDED + "'/>&nbsp";
-                            } else {
-                                expandCollapseIconStr = "<img func='collapseExpand' src='" + IMGURL_COLLAPSED + "'/>&nbsp";
-                            }
-                        }
-
-                        // Add member instances codes
-                        var mbrInst = "";
-                        if (m.hashCodes.length > 0) {
-                            mbrInst = "mbrInst='" + m.hashCodes.slice(0, iiC + 1) + "' level='" + iiC + "' ";
-                        }
-                    }
-
-                    var header = $("<div " + mbrInst + " class='ui-state-default slick-header-column' />")
-                        .html("<span class='slick-column-name'>" + expandCollapseIconStr + name + "</span>")
-                        // .width((isReport && m.width == 0) ? 0 : (m.width - headerColumnWidthDiff))
-                        .attr("id", "" + uid + m.id)
-                        .attr("col", m.id)
-                        .data("column", [m])
-                        .attr("ord", columnOrdinal)
-                        .addClass(m.headerCssClass || "")
-                        .appendTo($headers);
-                    
-                    if (!isReport) header.width((isReport && m.width == 0) ? 0 : (m.width - headerColumnWidthDiff));
-                    if (isReport && m.width <= 8) {
-                        header.css("padding-top", 4);
-                        header.css("padding-bottom", 4);
-                        header.css("padding-left", 0);
-                        header.css("padding-right", 0);
-                        if (m.width == 0)
-                            header.css("border", "none");
-                    }
-
-                    if (options.gridType == IS_HSF_GRID || options.gridType == IS_DIM_EDITOR_GRID) {
-                        header.width(m.width - headerColumnWidthDiff);
-                    } else {
-                        header.width((isReport && m.width == 0) ? 0 : (m.width - headerColumnWidthDiff));
-                    }
-                    if (isReport && (m.width > 0 && m.width - headerColumnWidthDiff < 0))
-                        header.width(m.width);
-
-                    if (i === DataOrigin_c) {
-                        header
-                            .width(header.width() - 1)
-                            .css('border-left', '1px solid #C0C0C0');
-                    }
-                    if (m.toolTip) header.attr("title", m.toolTip);
-                    if (m.fontColor) header.css('color', m.fontColor);
-
-                    trigger(self.onHeaderCellRendered, {
-                        "node": header[0],
-                        "column": m
-                    });
-
-                    if (options.showHeaderRow) {
-                        var headerRowCell = $("<div class='ui-state-default slick-headerrow-column l" + i + " r" + i + "'></div>")
-                            .data("column", [m])
-                            .appendTo($headerRow);
-
-                        trigger(self.onHeaderRowCellRendered, {
-                            "node": headerRowCell[0],
-                            "column": m
-                        });
-                    }
-                }
-
-
-                setSortColumns(sortColumns);
-                setupColumnResize();
-                if (options.enableColumnReorder) {
-                    setupColumnReorder();
-                }
-            }
-        }
-
-        function setupColumnSort() {
-            $headers.click(function(e) {
-                // temporary workaround for a bug in jQuery 1.7.1 (http://bugs.jquery.com/ticket/11328)
-                e.metaKey = e.metaKey || e.ctrlKey;
-
-                if ($(e.target).hasClass("slick-resizable-handle")) {
-                    return;
-                }
-
-                var $col = $(e.target).closest(".slick-header-column");
-                if (!$col.length) {
-                    return;
-                }
-
-                var column = $col.data("column");
-                if (column.sortable) {
-                    if (!getEditorLock().commitCurrentEdit()) {
-                        return;
-                    }
-
-                    var sortOpts = null;
-                    var i = 0;
-                    for (; i < sortColumns.length; i++) {
-                        if (sortColumns[i].columnId == column.id) {
-                            sortOpts = sortColumns[i];
-                            sortOpts.sortAsc = !sortOpts.sortAsc;
-                            break;
-                        }
-                    }
-
-                    if (e.metaKey && options.multiColumnSort) {
-                        if (sortOpts) {
-                            sortColumns.splice(i, 1);
-                        }
-                    } else {
-                        if ((!e.shiftKey && !e.metaKey) || !options.multiColumnSort) {
-                            sortColumns = [];
-                        }
-
-                        if (!sortOpts) {
-                            sortOpts = {
-                                columnId: column.id,
-                                sortAsc: column.defaultSortAsc
-                            };
-                            sortColumns.push(sortOpts);
-                        } else if (sortColumns.length == 0) {
-                            sortColumns.push(sortOpts);
-                        }
-                    }
-
-                    setSortColumns(sortColumns);
-
-                    if (!options.multiColumnSort) {
-                        trigger(self.onSort, {
-                            multiColumnSort: false,
-                            sortCol: column,
-                            sortAsc: sortOpts.sortAsc
-                        }, e);
-                    } else {
-                        trigger(self.onSort, {
-                            multiColumnSort: true,
-                            sortCols: $.map(sortColumns, function(col) {
-                                return {
-                                    sortCol: columns[getColumnIndex(col.columnId)],
-                                    sortAsc: col.sortAsc
-                                };
-                            })
-                        }, e);
-                    }
-                }
-            });
-        }
-
-        function setupColumnReorder() {
-            $headers.filter(":ui-sortable").sortable("destroy");
-            $headers.sortable({
-                containment: "parent",
-                distance: 3,
-                axis: "x",
-                cursor: "default",
-                tolerance: "intersection",
-                helper: "clone",
-                placeholder: "slick-sortable-placeholder ui-state-default slick-header-column",
-                start: function(e, ui) {
-                    ui.placeholder.width(ui.helper.outerWidth() - headerColumnWidthDiff);
-                    $(ui.helper).addClass("slick-header-column-active");
-                },
-                beforeStop: function(e, ui) {
-                    $(ui.helper).removeClass("slick-header-column-active");
-                },
-                stop: function(e) {
-                    if (!getEditorLock().commitCurrentEdit()) {
-                        $(this).sortable("cancel");
-                        return;
-                    }
-
-                    var reorderedIds = $headers.sortable("toArray");
-                    var reorderedColumns = [];
-                    for (var i = 0; i < reorderedIds.length; i++) {
-                        reorderedColumns.push(columns[getColumnIndex(reorderedIds[i].replace(uid, ""))]);
-                    }
-                    setColumns(reorderedColumns);
-
-                    trigger(self.onColumnsReordered, {});
-                    e.stopPropagation();
-                    setupColumnResize();
-                }
-            });
-        }
+        } 
 
         function setupColumnResize() {
             var $col, j, c, pageX, columnElements, minPageX, maxPageX, firstResizable, lastResizable;
@@ -1679,14 +968,14 @@ const KEY_CODE_Z = 90;
 
         function createCssRules() {
             $style = $("<style type='text/css' rel='stylesheet' />").appendTo($("head"));
-            var rowHeight = (options.rowHeight - cellHeightDiff);
+            var rowHeight = (rowDefaults.height - cellHeightDiff);
             var leftPos = (options.gridType == IS_HSF_GRID) ? "999px;" : "1000px;";
             var rules = [
-                "." + uid + " .slick-header-column { left:" + leftPos + " }",
+                // "." + uid + " .slick-header-column { left:" + leftPos + " }",
                 //                "." + uid + " .slick-top-panel { height:" + options.topPanelHeight + "px; }",
                 "." + uid + " .slick-headerrow-columns { height:" + options.headerRowHeight + "px; }",
                 "." + uid + " .slick-cell { height:" + rowHeight + "px; }",
-                "." + uid + " .slick-row { height:" + options.rowHeight + "px; }"
+                "." + uid + " .slick-row { height:" + rowDefaults.height + "px; }"
             ];
 
             if ($style[0].styleSheet) { // IE
@@ -1728,10 +1017,10 @@ const KEY_CODE_Z = 90;
                     } else {
                         if (matches = /\.l\d+/.exec(selector)) {
                             columnIdx = parseInt(matches[0].substr(2, matches[0].length - 2), 10);
-                            columnCssRulesL[columnIdx + DataOrigin_c] = cssRules[i];
+                            columnCssRulesL[columnIdx + numberOfColumnHeaders] = cssRules[i];
                         } else if (matches = /\.r\d+/.exec(selector)) {
                             columnIdx = parseInt(matches[0].substr(2, matches[0].length - 2), 10);
-                            columnCssRulesR[columnIdx + DataOrigin_c] = cssRules[i];
+                            columnCssRulesR[columnIdx + numberOfColumnHeaders] = cssRules[i];
                         }
                     }
                 }
@@ -1759,12 +1048,6 @@ const KEY_CODE_Z = 90;
             }
 
 
-
-
-            if (options.enableColumnReorder) {
-                $headers.filter(":ui-sortable").sortable("destroy");
-            }
-
             unbindAncestorScrollEvents();
             $container.unbind(".slickgrid");
             removeCssRules();
@@ -1785,7 +1068,7 @@ const KEY_CODE_Z = 90;
         }
 
         function getEditorLock() {
-            return options.editorLock;
+            return Slick.GlobalEditorLock;
         }
 
         function getEditController() {
@@ -1830,39 +1113,6 @@ const KEY_CODE_Z = 90;
             })
         }
 
-        function setSortColumn(columnId, ascending) {
-            setSortColumns([{
-                columnId: columnId,
-                sortAsc: ascending
-            }]);
-        }
-
-        function setSortColumns(cols) {
-            sortColumns = cols;
-
-            var headerColumnEls = $headers.children();
-            headerColumnEls
-                .removeClass("slick-header-column-sorted")
-                .find(".slick-sort-indicator")
-                .removeClass("slick-sort-indicator-asc slick-sort-indicator-desc");
-
-            $.each(sortColumns, function(i, col) {
-                if (col.sortAsc == null) {
-                    col.sortAsc = true;
-                }
-                var columnIndex = getColumnIndex(col.columnId);
-                if (columnIndex != null) {
-                    headerColumnEls.eq(columnIndex)
-                        .addClass("slick-header-column-sorted")
-                        .find(".slick-sort-indicator")
-                        .addClass(col.sortAsc ? "slick-sort-indicator-asc" : "slick-sort-indicator-desc");
-                }
-            });
-        }
-
-        function getSortColumns() {
-            return sortColumns;
-        }
 
         function handleSelectedRangesChanged(e, ranges) {
             selectedRows = [];
@@ -1874,14 +1124,14 @@ const KEY_CODE_Z = 90;
                         hash[j] = {};
                     }
                     for (var k = ranges[i].fromCell; k <= ranges[i].toCell; k++) {
-                        if (canCellBeSelected(j, k + DataOrigin_c)) {
-                            hash[j][columns[k + DataOrigin_c].id] = options.selectedCellCssClass;
+                        if (canCellBeSelected(j, k + numberOfColumnHeaders)) {
+                            hash[j][columns[k + numberOfColumnHeaders].id] = "selected";
                         }
                     }
                 }
             }
 
-            setCellCssStyles(options.selectedCellCssClass, hash);
+            setCellCssStyles("selected", hash);
 
             trigger(self.onSelectedRowsChanged, {
                 rows: getSelectedRows()
@@ -1922,7 +1172,7 @@ const KEY_CODE_Z = 90;
                 if (options.columnWidthStates.length) {
                     m.width = options.columnWidthStates[i];
                 }
-                columnsById[m.id] = i - DataOrigin_c;
+                columnsById[m.id] = i - numberOfColumnHeaders;
                 if (m.width == undefined) {
                     m.width = 100;
                 }
@@ -1942,7 +1192,7 @@ const KEY_CODE_Z = 90;
 
             makeActiveCellNormal();
 
-            if (options.enableAddRow !== newOptions.enableAddRow) {
+            if (false !== newfalse) {
                 invalidateRow(getDataLength());
             }
 
@@ -2014,29 +1264,14 @@ const KEY_CODE_Z = 90;
         }
 
         function getDataLength() {
-            return data.length;
-        }
-
-        function getDataLengthIncludingAddNew() {
-            return getDataLength() + (options.enableAddRow ? 1 : 0);
+            return cells.length - numberOfColumnHeaders;
         }
 
         function getDataItem(i) {
-            if (data.getItem) {
-                return data.getItem(i);
+            if (cells.getItem) {
+                return cells.getItem(i);
             } else {
-                return data[i];
-            }
-        }
-
-        function setHeaderRowVisibility(visible) {
-            if (options.showHeaderRow != visible) {
-                options.showHeaderRow = visible;
-                if (visible) {
-                    $headerRowScroller.slideDown("fast", resizeCanvas);
-                } else {
-                    $headerRowScroller.slideUp("fast", resizeCanvas);
-                }
+                return cells[i];
             }
         }
 
@@ -2048,14 +1283,9 @@ const KEY_CODE_Z = 90;
         // Rendering / Scrolling
 
         function getRowTop(row) {
-            return options.rowHeight * row - offset;
+            return rowDefaults.height * row - offset;
         }
 
-        /*
-        function getRowFromPosition(y) {
-            return Math.floor((y + offset) / options.rowHeight);
-        }*/
-        // new method added for supporting custom row height
         function getRowFromPosition(maxPosition) {
             var row = 0;
             var rowsInPosCache = getDataLength();
@@ -2144,15 +1374,17 @@ const KEY_CODE_Z = 90;
             }
         }
 
-        function numberFormatter(value, cell) {
+        function numberFormatter(value) {
+            
             if (value == null || value == "") {
+
                 return "";
+
             } else {
+
                 /// Determine which precision to round to
                 var toFixed = value.length - value.indexOf('.') - 1;
-                if (cell.precision) {
-                    toFixed = cell.precision;
-                } else if (toFixed < options.minPrecision) {
+                if (toFixed < options.minPrecision) {
                     toFixed = options.minPrecision;
                 } else if (toFixed > options.maxPrecision) {
                     toFixed = options.maxPrecision;
@@ -2220,9 +1452,6 @@ const KEY_CODE_Z = 90;
         }
 
         function getDataItemValueForColumn(item, columnDef) {
-            if (options.dataItemColumnValueExtractor) {
-                return options.dataItemColumnValueExtractor(item, columnDef);
-            }
             return item[columnDef.field].value;
         }
 
@@ -2234,10 +1463,10 @@ const KEY_CODE_Z = 90;
                 (row === activeRow ? " active" : "")
 
             if (!d) {
-                rowCss += " " + options.addNewRowCssClass;
+                rowCss += " " + "new-row";
             }
 
-            var metadata = data.getItemMetadata && data.getItemMetadata(row);
+            var metadata = cells.getItemMetadata && cells.getItemMetadata(row);
 
             if (metadata && metadata.cssClasses) {
                 rowCss += " " + metadata.cssClasses;
@@ -2249,16 +1478,13 @@ const KEY_CODE_Z = 90;
                 }
             }
 
-            //stringArray.push("<div class='ui-widget-content " + rowCss + "' style='top:" + getRowTop(row) + "px;' " + "row=" + row + ">");
-            //stringArray2.push("<div class='ui-widget-content " + rowCss + "' style='top:" + getRowTop(row) + "px;' " + "row=" + row + ">");
-
             stringArray.push("<div class='ui-widget-content ");
             stringArray.push(rowCss);
             stringArray.push("' style='" + slideOnCss + "top:");
             stringArray.push(rowPositionCache[row].top);
             stringArray.push("px;");
             stringArray.push(
-                (rowPositionCache[row].height != options.rowHeight) ?
+                (rowPositionCache[row].height != rowDefaults.height) ?
                 "height:" + rowPositionCache[row].height + "px;" :
                 ""
             );
@@ -2269,58 +1495,61 @@ const KEY_CODE_Z = 90;
             stringArray2.push(rowPositionCache[row].top);
             stringArray2.push("px;");
             stringArray2.push(
-                (rowPositionCache[row].height != options.rowHeight) ?
+                (rowPositionCache[row].height != rowDefaults.height) ?
                 "height:" + rowPositionCache[row].height + "px;" :
                 ""
             );
             stringArray2.push("'>");
 
-            for (let i = 0; i < DataOrigin_c; i++) {
-                var RHname = ""
-                RHdata[row].forEach(function(e) {
-                    if (e.value) {
-                        RHname += e.value.trim() + "|"
-                    };
-                })
-                RHnames[RHname.slice(0, -1)] = row;
-                appendCellHtml(stringArray2, row, i, 1, d);
+            for (let i = 0, cell, stringArrayToUse; i < numberOfColumns; i++) {
+              
+                cell = cells[row + numberOfColumnHeaders][i];
+
+                if (i < numberOfRowHeaders) {
+                    stringArrayToUse = stringArray2;
+                    rowsCacheToUse = rowsCache2;
+                } else { 
+                    stringArrayToUse = stringArray;
+                    rowsCacheToUse = rowsCache;
+                }
+                
+                appendCellHtml(stringArrayToUse, rowsCacheToUse, cell, row, i);
+
             }
 
-            var colspan, m;
-            for (let i = 0, ii = columns.length; i < ii; i++) {
-
-                m = columns[i];
-                colspan = 1;
-                if (metadata && metadata.columns) {
-                    var columnData = metadata.columns[m.id] || metadata.columns[i];
-                    colspan = (columnData && columnData.colspan) || 1;
-                    if (colspan === "*") {
-                        colspan = ii - i;
-                    }
-                }
-
-                // Do not render cells outside of the viewport.
-                if (columnPosRight[Math.min(ii - 1, i + colspan - 1)] > range.leftPx) {
-                    if (columnPosLeft[i] > range.rightPx) {
-                        // All columns to the right are outside the range.
-                        break;
-                    }
-                    if (i >= DataOrigin_c) {
-                        appendCellHtml(stringArray, row, i, colspan, d);
-                    }
-                }
-
-
-
-
-                if (colspan > 1) {
-                    i += (colspan - 1);
-                }
-            }
             stringArray.push("</div>");
             stringArray2.push("</div>");
         }
 
+        function appendCellHtml(stringArray, rowCache, cell, row, column) {
+
+            let cellDataAttributes = "";
+            let cellCssClasses = "";
+            let value = "";
+
+            if (cell != null) {
+
+                let columnIndex = cell.columnIndex;
+                let rowIndex = cell.rowIndex;
+                
+                if (column < numberOfRowHeaders) {
+                    cellCssClasses += " header";
+                }
+                if (cell.dataType == DATA_TYPE_CURRENCY || cell.dataType == DATA_TYPE_NONCURRENCY || cell.dataType == DATA_TYPE_PERCENTAGE) {
+                     cellCssClasses +=" numeric";
+                }
+                
+                cellDataAttributes = "row='" + rowIndex + "' column='" + columnIndex + "'";
+
+                value = getFormatter(cell.dataType)(cell.displayText || cell.value);
+            
+            }
+
+            stringArray.push("<div class='slick-cell" + cellCssClasses + "' " + cellDataAttributes + ">" + value + "</div>");
+
+            rowsCache[row].cellRenderQueue.push(column);
+        }
+        
         function isNumeric(cell) {
             if (cell.types == DATA_TYPE_CURRENCY ||
                 cell.types == DATA_TYPE_NONCURRENCY ||
@@ -2332,469 +1561,9 @@ const KEY_CODE_Z = 90;
             }
         }
 
-        function addDataCellHtml(stringArray, row, col, colspan) {
-            var c = getData()[row][col];
-            var cellCss = "slick-cell l" + col + " r" + col + " row" + row;
-            var cellStyle = "";
-            var value = "";
-
-            if (columns[col + DataOrigin_c].width != 100) {
-                cellStyle += "width:" + (columns[col + DataOrigin_c].width - 2 * PADDING_WIDTH) + "px;";
-            }
-            // Handling left and right justified shifts for numerics and text cells
-            if ('status' in c) {
-
-                if (isNumeric(c)) {
-
-                    cellCss += " numeric";
-
-                    if (c.value < 0) {
-                        cellCss += " negative";
-                    }
-
-                } else if (c.types == DATA_TYPE_TEXT) {
-
-                    cellCss += " text";
-
-                }
-
-                // adding stylings applied to whole columns
-                if (columns[col + DataOrigin_c].columnCssClass) cellCss += columns[col + DataOrigin_c].columnCssClass;
-
-                // handling custom set of rowspan
-                if (c.rowspan && c.rowspan > 1) {
-                    cellStyle += "z-index:2;height:" + (c.rowspan * defaults.rowHeight - PADDING_WIDTH) + "px;"
-                }
-
-                // handling UI changes HSF grid
-                if (options.gridType == IS_HSF_GRID || options.gridType == IS_DIM_EDITOR_GRID) {
-                    // removing left-right borders in first data row in "account names" all except for last one
-                    if (row === 0 && data[row][col + 1] && 'status' in data[row][col + 1]) {
-                        cellStyle += "border-right: 1px solid #f2f4f7;"
-                    }
-                }
-
-                // // handling smart list data types
-                // if (c.types == DATA_TYPE_ENUMERATION && Model) {
-                //     cellCss += " enum";
-                //     var smartLists;
-                //     if (options.gridType == IS_DIM_EDITOR_GRID) {
-                //         smartLists = options.smartLists[col].split(",");
-                //     }
-
-                //     var writeSmartListValues = function(smartCellRow, smartCellCol) {
-                //         if (Model.planningGridJSON.options.smartLists.length == 0) {
-                //             setTimeout(writeSmartListValues.bind(null, smartCellRow, smartCellCol), 500);
-                //         } else {
-                //             var html = null;
-                //             if (options.gridType == IS_DIM_EDITOR_GRID) {
-                //                 html = c.value;
-                //             } else {
-                //                 html = Model.planningGridJSON.options.smartLists[+c.value] + STR_ENUM_ICON;
-                //             }
-                //             this.$(".slick-cell.row" + smartCellRow + ".l" + smartCellCol).html(html);
-                //             if (ko.dataFor(View.planningGrid[0])) ko.dataFor(View.planningGrid[0]).adhoc_smartListArray(Model.planningGridJSON.options.smartLists);
-                //         }
-                //     }
-
-                //     if (Model.planningGridJSON.options.smartLists.length > 0) {
-                //         if (options.gridType == IS_DIM_EDITOR_GRID) {
-                //             value = c.value;
-                //         } else {
-                //             value = Model.planningGridJSON.options.smartLists[+c.value] + STR_ENUM_ICON;
-                //         }
-                //     } else {
-                //         writeSmartListValues(row, col);
-                //     }
-                // } else {
-
-                    if ((c.status & HAS_FORMULA) !== 0) {
-                        if (options.formulaDependencies) {
-                            c.value = processFormulaDependencies(c, options.formulaDependencies[c.i], container) + "";
-                        } else {
-                            //c.value = sevalFormula(false, options.nCols, 0, options.DataOrigin_r, c.types, Model.sv.grid.vals.slice(options.nCols-1), c.mbrFormula, "MM/dd/yy");
-                        }
-                    }
-                    // Use no value if missing, other get and format value of the cell
-                    value = ((c.status & IS_MISSING) === 0) ? (getFormatter(c.types)(c.value, c)) : options.missingLabelText;
-                // }
-
-                try {
-                    if (c.styleId) {
-                        cellStyle = addToCellStyle(cellStyle, options.HspStylesMap[c.styleId]);
-                        if (options.HspStylesMap[c.styleId].textRot) {
-                            cellStyle += "height:" + (columnDefaults.width * +c.rowspan - PADDING_WIDTH) + "px;width:" + (defaults.rowHeight * +c.colspan - PADDING_WIDTH) + "px;"
-                        }
-                    }
-                } catch (e) {
-                    console.log(e);
-                };
-
-                if (isReport) {
-                    if (c.colspan && c.colspan > 1) {
-                        var spanWidth = 0;
-                        var pdWidth = 2 * PADDING_WIDTH;
-                        for (var sp = 0; sp < c.colspan; sp++) {
-                            spanWidth += columns[col + sp + DataOrigin_c].width;
-                        }
-                        spanWidth = (spanWidth - pdWidth).toFixed(2);
-                        cellStyle += "z-index:2;width:" + spanWidth + "px;"
-                        try { //  hack to remove borders of underlaying cells.
-                            for (var csp = 1; csp < c.colspan - 1; csp++) {
-                                data[row][col + csp].isOnspan = true;;
-                            }
-                        } catch (ex) {}
-                    } else {
-                        cellStyle += "width:" + (columns[DataOrigin_c + col].width) + "px;overflow:visible;white-space:nowrap;"
-                    }
-
-                    try { //hack to remove borders of underlaying cells.
-                        if (c.isOnspan)
-                            cellStyle += "border-right-color:transparent;";
-                        cellStyle += "border-left-width:0px;";
-                        if (isDisplayGridlines) {
-                            if (cellStyle.match(/background-color:/gi) == null) {
-                                cellStyle += "border-style:solid;";
-                            }
-                        }
-                        if (c.borderId) {
-
-                            if (options.HspBordersMap[c.borderId] == "border-left-style:NONE;border-right-style:NONE;border-top-style:NONE;border-bottom-style:NONE;") {
-                                if (!isDisplayGridlines)
-                                    cellStyle += options.HspBordersMap[c.borderId];
-                            } else {
-                                try {
-                                    if (row > 0) {
-                                        var topCell = getData()[row - 1][col];
-                                        var topBrStyle = options.HspBordersMap[topCell.borderId];
-                                        var currentCellStyle = options.HspBordersMap[c.borderId];
-                                        if ((topBrStyle.match(/border-bottom-style:NONE/gi) == null && topBrStyle.match(/border-bottom-style/gi) != null) &&
-                                            (currentCellStyle.match(/border-top-style:NONE/gi) == null && currentCellStyle.match(/border-top-style/gi) != null)) {
-                                            var newStyleArray = currentCellStyle.split("border-top-style:");
-                                            var newStyle = "border-top-width:0px;";
-                                            if (newStyleArray.length > 1) {
-                                                cellStyle += newStyleArray[0] + newStyle + newStyleArray[1];
-                                            } else {
-                                                cellStyle += options.HspBordersMap[c.borderId];
-                                            }
-                                        } else {
-                                            cellStyle += options.HspBordersMap[c.borderId];
-                                        }
-                                    } else {
-                                        cellStyle += options.HspBordersMap[c.borderId];
-                                    }
-                                } catch (ex) {
-                                    cellStyle += options.HspBordersMap[c.borderId];
-                                }
-                            }
-                        }
-
-                    } catch (ex) {}
-
-                    var nextCell = getData()[row][col + 1];
-                    if (nextCell != null) {
-                        if ('status' in nextCell) {
-                            if (isDisplayGridlines && isNaN(nextCell.status)) {
-                                cellStyle += "border-right-style:solid;";
-                            }
-                        } else {
-                            if (isDisplayGridlines)
-                                cellStyle += "border-right-style:solid;";
-                        }
-                    }
-                    var nextRow = getData()[row + 1];
-                    if (nextRow != null) {
-                        var nRow = getData()[row + 1][col];
-                        if (nRow != null) {
-                            if ('status' in nRow) {
-                                if (isDisplayGridlines && isNaN(nRow.status)) {
-                                    cellStyle += "border-right-style:solid;";
-                                }
-                            } else {
-                                if (isDisplayGridlines)
-                                    cellStyle += "border-bottom-style:solid;";
-                            }
-                        }
-                    }
-
-                } else {
-
-                    // Specific Table Cell Stylings
-                    if (!options.editable || ((c.status & READ_ONLY) != 0)) {
-                        cellCss += " readonly";
-                    } else if ((c.status & IS_ACTUAL) != 0) {
-                        cellCss += " actual";
-                    }
-
-                    if ((c.status & IS_LOCKED) != 0) {
-                        cellCss += " locked";
-                    }
-                    if ((c.status & IS_CALCULATED) != 0) {
-                        cellCss += " calculated";
-                    }
-                    if ((c.status & HAS_SUPP_DETAIL) != 0) {
-                        cellCss += " supporting-detail";
-                    }
-                    if ((c.status & FROM_SANDBOX) != 0) {
-                        cellCss += " sandbox";
-                    }
-                    if ((c.status & IS_DIRTY) != 0) {
-                        cellCss += " dirty";
-                    }
-                    if ((c.status & IS_IMPACTED) != 0) {
-                        cellCss += " impacted";
-                    }
-                    if ((c.status & IS_DRILLABLE) != 0) {
-                        cellCss += " drillable";
-                    }
-                    if ((c.status & HAS_ATTACH) != 0) {
-                        cellCss += " attachment";
-                    }
-                    if ((c.status & HAS_COMMENT) != 0) {
-                        cellCss += " comment";
-                    }
-                    if ((c.status & IS_BOLD_DATA) != 0) {
-                        cellCss += " bold";
-                    }
-                    // if ((c.status & IS_ACTUAL) != 0) {
-                    //     cellCss += " actual";
-                    // }
-                    if ((c.status & IS_SCALAR) != 0) {
-                        cellCss += " scalar";
-                    }
-
-                    if (c.colspan && c.colspan > 1) {
-                        cellStyle += "z-index:2;width:" + (c.colspan * columnDefaults.width - (2 * PADDING_WIDTH)) + "px;"
-                    }
-
-                    if (c.borderId) {
-                        cellStyle += options.HspBordersMap[c.borderId];
-                    }
-                }
-            } else {
-                // dummy cell styling
-                if (isReport) {
-                    cellCss += " dummyreports";
-                    try {
-                        cellStyle += "width:" + (columns[DataOrigin_c + col].width) + "px;";
-                    } catch (ex) {}
-                    if (isDisplayGridlines)
-                        cellStyle += "border-style:solid;";
-                } else {
-                    cellCss += " dummy";
-                }
-            }
-
-            if (isReport) {
-
-                if (!isDisplayGridlines)
-                    cellCss += " nogridlines";
-
-                if (columns[col + DataOrigin_c].width == 0)
-                    cellStyle += "z-index:-10;";
-                if (columns[col + DataOrigin_c].width != 0)
-                    cellStyle += "padding-left:2px;padding-right:2px;";
-                else
-                    cellStyle += "padding-left:0px;padding-right:0px;border-right-width:0px;";
-
-                var bxBr = ""; //"box-sizing:border-box; -moz-box-sizing: border-box;-webkit-box-sizing: border-box;";
-                if (cellStyle.search("border-left-style:NONE;") != -1) {
-                    cellStyle = cellStyle.replace("border-left-style:NONE;", "");
-                    cellStyle += bxBr;
-                }
-                if (cellStyle.search("border-right-style:NONE;") != -1) {
-                    cellStyle = cellStyle.replace("border-right-style:NONE;", "");
-                    cellStyle += bxBr;
-                }
-                if (cellStyle.search("border-top-style:NONE;") != -1) {
-                    cellStyle = cellStyle.replace("border-top-style:NONE;", "");
-                    cellStyle += bxBr;
-                }
-                if (cellStyle.search("border-bottom-style:NONE;") != -1) {
-                    cellStyle = cellStyle.replace("border-bottom-style:NONE;", "");
-                    cellStyle += bxBr;
-                };
-                if (col < Object.keys(cells[0]).length - 1) { // Overflow issue on last column
-                    if (headers && headers.HspSlickRowHeaders && headers.HspSlickRowHeaders[0].members[row]) {
-                        if (headers.HspSlickRowHeaders[0].members[row].header_style) {
-                            if (headers.HspSlickRowHeaders[0].members[row].header_style.zeroRowHeight)
-                                cellCss += " slick-cell-wrap";
-                            else {
-                                cellCss += " slick-cell-nowrap";
-                            }
-                        }
-                    }
-                }
-                if (headers && headers.HspSlickRowHeaders && headers.HspSlickRowHeaders[0].members[row]) {
-                    if (headers.HspSlickRowHeaders[0].members[row].header_style) {
-                        if (headers.HspSlickRowHeaders[0].members[row].header_style.zeroRowHeight)
-                            cellStyle += "height: 0px;z-index:-10;"
-                    }
-                }
-
-                if (cellStyle.match(/background-color:/gi) == null) {
-                    if (value.trim().length > 0)
-                        cellStyle += "background-color:white;";
-                    else
-                        cellStyle += "background-color:transparent;";
-                } else {
-                    if (value.trim().length == 0)
-                        cellStyle += "z-index:0;";
-                }
-            }
-
-
-            var rowHeight = (options.rowHeight - cellHeightDiff);
-            var cellHeight = (rowHeight + 5) * c.rowspan - 5 + (rowPositionCache[row].height - options.rowHeight);
-            if (col < DataOrigin_c) { //Bug 20815385
-                if (c.rowspan > 1) {
-                    var heightAdj = 0;
-                    var metadata = data.getItemMetadata && data.getItemMetadata(row);
-                    if (metadata && metadata.hasOwnProperty('rows')) {
-                        heightAdj = (metadata.rows[row]) ? metadata.rows[row].height : 0;
-                        for (var key in metadata.rows) {
-                            if (parseInt(key) != row) {
-                                if (parseInt(key) > row && parseInt(key) < (row + c.rowspan)) {
-                                    heightAdj += metadata.rows[key].height - 25;
-                                }
-                            } else {
-                                heightAdj = 0;
-                            }
-                        }
-                    }
-                    cellHeight += heightAdj;
-                }
-            }
-
-            if (isReport) {
-                if (cellHeight == 0) {
-                    cellStyle += "overflow:hidden;padding-top:0px;padding-bottom:0px;border-top-width:0px;border-bottom-width:0px;"
-                }
-
-                var alignProp = "";
-                try {
-                    var nevCheckRegExp = /\(([^)]+)\)/;
-                    var matches = nevCheckRegExp.exec(value);
-                    if (matches && matches[1]) {
-                        if (value.trim().length == matches[1].length + 2) {
-                            if (!isNaN(matches[1].replace("%", "").replace("$", "").replace(",", ""))) {
-                                cellCss += " negative";
-                                alignProp = " align='right' ";
-                            }
-                        }
-                    }
-                } catch (ex) {}
-                if (($.isNumeric(value.replace(",", "")) || validateCurrency(value) || /%$/.test(value))) { // temp fix for bug 25292881 
-                    alignProp = " align='right' ";
-                } else if (value.match(/\(0.00\)/) || value.match(/\(0\)/)) {
-                    alignProp = " align='right' ";
-                }
-
-                stringArray.push(
-                    "<div " + alignProp + " " +
-                    ((c.i) ? " cellsIndex='" + c.i + "'" : "") +
-                    " class='" + cellCss + "'" +
-                    "style='" + cellStyle + "'>" + value
-                );
-
-            } else {
-                var rowIndex = (('acctTrack' in c) ? c.acctTrack : row);
-                stringArray.push(
-                    "<div " +
-                    ((c.i) ? " cellsIndex='" + c.i + "'" : "") + ((c.i) ? " ord='" + ((+rowIndex + 1) * (options.nCols) + col) + "'" : "") +
-                    " class='" + cellCss + "'" +
-                    "style='" + cellStyle + "'>" + value
-                );
-            }
-
-
-
-            stringArray.push("<div class='slick-resizable-handle'></div></div>");
-            rowsCache[row].cellRenderQueue.push(col);
-            rowsCache[row].cellColSpans[col] = colspan;
-        }
-
         function validateCurrency(value) {
             var regx = /^\$?[0-9][0-9,]*[0-9]\.?[0-9]{0,2}$/i;
             return regx.test(value);
-        }
-
-        function addRowHeaderHtml(stringArray, row, col, colspan) {
-            var size;
-
-            var c = RHdata[row][col];
-
-
-
-            var cellStyle = (c.style && !$.isEmptyObject(c.style)) ? addToCellStyle(cellStyle, c.style) : "";
-
-            var cellCss = "slick-cell hl" + col + " hr" + col + " header" + ((c.hasChildren) ? " header-parent" : "");
-            var isHSFGrid_SecondRowHeader = (options.gridType == IS_HSF_GRID && col > 0);
-
-            if (columns[col].width != 100) {
-                cellStyle += "width:" + (columns[col].width - 2 * PADDING_WIDTH) + "px;";
-            }
-
-            if ('status' in c) {
-                if ((c.status & IS_FORECAST_METHOD) != 0) {
-                    cellCss += " forecast-method";
-                }
-                if ((c.status & IS_BOLD_HEADER) != 0) {
-                    cellCss += " bold";
-                }
-                if ((c.status & IS_WRITABLE) != 0) {
-                    cellCss += " editable-row-header";
-                }
-                if ((c.status & IS_ACTUAL) != 0) {
-                    cellCss += " actual";
-                }
-
-            } else {
-                cellCss += " dummy";
-            }
-
-            if (c.size && c.size > 1) {
-                size = options.rowHeight * c.size - 2;
-                cellStyle += "height:" + size + "px;z-index:2;";
-            }
-
-            if (options.gridType == IS_HSF_GRID) {
-                // Center text for accounts in first HSF column
-                if (col == 0) {
-                    cellStyle += "vertical-align:middle;";
-                }
-            }
-            if (isReport) {
-                cellStyle += "border-left-width:0px;border-right-width:1px;border-top-width:0px;border-bottom-width:1px;border-style:solid;width:35px;text-align:center;";
-            }
-
-            var rowIndex = (('acctTrack' in c) ? c.acctTrack : row);
-            var ord = ((+rowIndex + DataOrigin_c) * (options.nCols)) + col;
-
-            stringArray.push(
-                "<div " + (
-                    (c.mbrInst) ? "mbrInst='" + c.mbrInst + "'" : ""
-                ) +
-                " hRIndex='" + rowIndex + "'" +
-                " hCIndex='" + col + "'" +
-                " ord='" + ord + "'" +
-                " class='" + cellCss +
-                "' style='" + cellStyle + "'>"
-            );
-
-            if (c.nL && !isHSFGrid_SecondRowHeader) {
-                if (!c.hasChildren) stringArray.push(STR_PARENT_MEMBER_HEADER_INDENT);
-                stringArray.push(stringRepeat(STR_PARENT_MEMBER_HEADER_INDENT, c.nL));
-            }
-
-            if (c.hasChildren && !isHSFGrid_SecondRowHeader) {
-                (c.isExpanded) ?
-                stringArray.push("<img func='collapseExpand' src='" + IMGURL_EXPANDED + "'/>&nbsp"):
-                    stringArray.push("<img func='collapseExpand' src='" + IMGURL_COLLAPSED + "'/>&nbsp");
-            }
-            stringArray.push(((c.value) ? c.value : "") + "<div class='slick-resizable-handle'></div></div>");
-            rowsCache2[row].cellRenderQueue.push(col);
-            rowsCache2[row].cellColSpans[col] = colspan;
         }
 
         function stringRepeat(str, count) {
@@ -2810,15 +1579,6 @@ const KEY_CODE_Z = 90;
             }
         }
 
-        function appendCellHtml(stringArray, row, cell, colspan) {
-            if (cell < DataOrigin_c) {
-                addRowHeaderHtml(stringArray, row, cell, colspan);
-            } else {
-                addDataCellHtml(stringArray, row, cell - DataOrigin_c, colspan);
-            }
-            cellCount = cell;
-            rowCount = row;
-        }
 
 
         function cleanupRows(rangeToKeep) {
@@ -2858,7 +1618,7 @@ const KEY_CODE_Z = 90;
             //             }
             //             Model.sv.addLabelRowsDict[rowName] = {
             //                 data: labelRowCells,
-            //                 RHdata : Array.apply(null, Array(DataOrigin_c)).map(function() {
+            //                 RHdata : Array.apply(null, Array(numberOfColumnHeaders)).map(function() {
             //                     return {
             //                         hasChildren: false,
             //                         isExpanded: true,
@@ -2871,7 +1631,7 @@ const KEY_CODE_Z = 90;
             //                 })
             //             }
             //         }
-            //         data.splice(row, 0, Model.sv.addLabelRowsDict[rowName].data);
+            //         cells.splice(row, 0, Model.sv.addLabelRowsDict[rowName].data);
             //         RHdata.splice(row, 0, Model.sv.addLabelRowsDict[rowName].RHdata);
             //     }
             // }
@@ -2999,11 +1759,12 @@ const KEY_CODE_Z = 90;
             } else {
                 columnRowHeaderHeight = 26;
             }
-            viewportH = getViewportHeight() - columnRowHeaderHeight + $('.slick-header-columns').height(); //26; //numParentColumns*26; 
+            viewportH = $container.height() - $scrollerContainer.height();
 
 
-            numVisibleRows = Math.ceil(viewportH / options.rowHeight);
+            numVisibleRows = Math.ceil(viewportH / rowDefaults.height);
             viewportW = parseFloat($.css($container[0], "width", true));
+
             $viewport.height(viewportH);
             $viewport2.height(viewportH);
 
@@ -3012,11 +1773,6 @@ const KEY_CODE_Z = 90;
             // Since the width has changed, force the render() to reevaluate virtually rendered cells.
             lastRenderedScrollLeft = -1;
             render();
-            // if (isReport) {
-            //     $('.ui-state-default.slick-header-column[level]').each(function(i,e) {
-            //         debugger;
-            //     });
-            // }
         }
 
         function updateRowCount() {
@@ -3024,13 +1780,12 @@ const KEY_CODE_Z = 90;
                 return;
             }
             cacheRowPositions(); //support for row height
-            var dataLengthIncludingAddNew = getDataLengthIncludingAddNew();
-            var numberOfRows = dataLengthIncludingAddNew +
-                (options.leaveSpaceForNewRows ? numVisibleRows - 1 : 0);
+            var dataLengthIncludingAddNew = getDataLength();
+            var numberOfRows = dataLengthIncludingAddNew;
 
             var oldViewportHasVScroll = viewportHasVScroll;
             // with autoHeight, we do not need to accommodate the vertical scroll bar
-            // viewportHasVScroll = !options.autoHeight && (numberOfRows * options.rowHeight > viewportH);
+            // viewportHasVScroll = !options.autoHeight && (numberOfRows * rowDefaults.height > viewportH);
             viewportHasVScroll = rowPositionCache[numberOfRows - 1] && (rowPositionCache[numberOfRows - 1].bottom > viewportH);
             makeActiveCellNormal();
 
@@ -3049,11 +1804,11 @@ const KEY_CODE_Z = 90;
 
             var oldH = h;
 
-            var rowMax = (options.enableAddRow) ?
+            var rowMax = (false) ?
                 rowPositionCache[getDataLength()].bottom :
                 rowPositionCache[getDataLength()].top;
             th = Math.max(rowMax, viewportH - scrollbarDimensions.height);
-            //th = Math.max(options.rowHeight * numberOfRows, viewportH - scrollbarDimensions.height);
+            //th = Math.max(rowDefaults.height * numberOfRows, viewportH - scrollbarDimensions.height);
             if (th < maxSupportedCssHeight) {
                 // just one page
                 h = ph = th;
@@ -3098,7 +1853,7 @@ const KEY_CODE_Z = 90;
 
             return {
                 top: getRowFromPosition(viewportTop),
-                bottom: getRowFromPosition(viewportTop + viewportH) + 1,
+                bottom: getRowFromPosition(viewportTop + viewportH),
                 leftPx: viewportLeft,
                 rightPx: viewportLeft + viewportW
             };
@@ -3106,7 +1861,7 @@ const KEY_CODE_Z = 90;
 
         function getRenderedRange(viewportTop, viewportLeft) {
             var range = getVisibleRange(viewportTop, viewportLeft);
-            var buffer = Math.round(viewportH / options.rowHeight);
+            var buffer = Math.round(viewportH / rowDefaults.height);
             var minBuffer = 3;
 
             if (vScrollDir == -1) {
@@ -3121,16 +1876,10 @@ const KEY_CODE_Z = 90;
             }
 
             range.top = Math.max(0, range.top);
-            range.bottom = Math.min(getDataLengthIncludingAddNew() - 1, range.bottom);
-
-            // range.leftPx -= viewportW;
-            // range.rightPx += viewportW;
-
-            // range.leftPx = Math.max(0, range.leftPx);
-            // range.rightPx = Math.min(canvasWidth, range.rightPx);
+            range.bottom = Math.min(getDataLength(), range.bottom);
 
             range.leftPx = 0;
-            range.rightPx = canvasWidth;
+            range.rightPx = getCanvasWidth();
 
             return range;
         }
@@ -3211,7 +1960,7 @@ const KEY_CODE_Z = 90;
                 // Render missing cells.
                 cellsAdded = 0;
 
-                var metadata = data.getItemMetadata && data.getItemMetadata(row);
+                var metadata = cells.getItemMetadata && cells.getItemMetadata(row);
                 metadata = metadata && metadata.columns;
 
                 var d = getDataItem(row);
@@ -3224,13 +1973,13 @@ const KEY_CODE_Z = 90;
                     }
 
                     // Already rendered.
-                    if (i < DataOrigin_c) {
+                    if (i < numberOfColumnHeaders) {
                         if ((colspan = cacheEntry2.cellColSpans[i]) != null) {
                             i += (colspan > 1 ? colspan - 1 : 0);
                             continue;
                         }
                     } else {
-                        if ((colspan = cacheEntry.cellColSpans[i - DataOrigin_c]) != null) {
+                        if ((colspan = cacheEntry.cellColSpans[i - numberOfColumnHeaders]) != null) {
                             i += (colspan > 1 ? colspan - 1 : 0);
                             continue;
                         }
@@ -3292,7 +2041,7 @@ const KEY_CODE_Z = 90;
                 needToReselectCell = false,
                 dataLength = getDataLength();
 
-            for (var i = range.top, ii = range.bottom; i <= ii; i++) {
+            for (var i = range.top, ii = range.bottom - 1; i <= ii; i++) {
                 if (rowsCache[i]) {
                     continue;
                 }
@@ -3341,19 +2090,10 @@ const KEY_CODE_Z = 90;
 
         }
 
-        function startPostProcessing() {
-            if (!options.enableAsyncPostRender) {
-                return;
-            }
-            clearTimeout(h_postrender);
-            h_postrender = setTimeout(asyncPostProcessRows, options.asyncPostRenderDelay);
-        }
-
         function invalidatePostProcessingResults(row) {
             delete postProcessedRows[row];
             postProcessFromRow = Math.min(postProcessFromRow, row);
             postProcessToRow = Math.max(postProcessToRow, row);
-            startPostProcessing();
         }
 
         function updateRowPositions() {
@@ -3380,8 +2120,8 @@ const KEY_CODE_Z = 90;
             renderRows(rendered);
 
             postProcessFromRow = visible.top;
-            postProcessToRow = Math.min(getDataLengthIncludingAddNew() - 1, visible.bottom);
-            startPostProcessing();
+            postProcessToRow = Math.min(getDataLength(), visible.bottom);
+            
 
 
 
@@ -3400,13 +2140,15 @@ const KEY_CODE_Z = 90;
             
             if (options.gridType == IS_DIM_EDITOR_GRID) {
                 viewport2Width = 0;
-                for (var iRowHeader = 0; iRowHeader <  DataOrigin_c; iRowHeader++) {
+                for (var iRowHeader = 0; iRowHeader <  numberOfColumnHeaders; iRowHeader++) {
                     viewport2Width += columns[iRowHeader].width;
                 }
             }
-            var diff = viewport2Width - $viewport2.width();
-            $viewport.width($viewport.width() - diff);
+            
+            $viewport.width($container.width() - viewport2Width - 1);
+
             $viewport2.width(viewport2Width);
+
             $cells = $(container + " .slick-cell, .slick-header-column");
 
             $smartList = (options.gridType == IS_DIM_EDITOR_GRID) ?
@@ -3488,7 +2230,7 @@ const KEY_CODE_Z = 90;
                             .css("position", "absolute")
                             .css("zIndex", "99999")
                             .css("width", $($canvas).innerWidth())
-                            .css("height", options.rowHeight)
+                            .css("height", rowDefaults.height)
                             .appendTo($canvas);
 
                         dragNDrop.guide = $("<div class='slick-reorder-guide'/>")
@@ -3504,7 +2246,7 @@ const KEY_CODE_Z = 90;
                             .css("position", "absolute")
                             .css("zIndex", "99999")
                             .css("width", $($canvas2).innerWidth())
-                            .css("height", options.rowHeight)
+                            .css("height", rowDefaults.height)
                             .appendTo($canvas2);
 
                         dragNDrop2.guide = $("<div class='slick-reorder-guide'/>")
@@ -3522,14 +2264,14 @@ const KEY_CODE_Z = 90;
                         dragNDrop.selectionProxy.css("top", top - 10);
                         dragNDrop2.selectionProxy.css("top", top2 - 10);
 
-                        var insertBefore = Math.max(0, Math.min(Math.round(top / options.rowHeight), 31));
+                        var insertBefore = Math.max(0, Math.min(Math.round(top / rowDefaults.height), 31));
 
                         if (insertBefore !== dragNDrop.insertBefore) {
                             var eventData = {
                                 "insertBefore": insertBefore
                             };
-                            dragNDrop.guide.css("top", insertBefore * options.rowHeight);
-                            dragNDrop2.guide.css("top", insertBefore * options.rowHeight);
+                            dragNDrop.guide.css("top", insertBefore * rowDefaults.height);
+                            dragNDrop2.guide.css("top", insertBefore * rowDefaults.height);
                             dragNDrop.insertBefore = insertBefore;
                             dragNDrop2.insertBefore = insertBefore;
                         }
@@ -3614,21 +2356,9 @@ const KEY_CODE_Z = 90;
             }
 
             if (hScrollDist || vScrollDist) {
-                //                if (h_render) {
-                //                    clearTimeout(h_render);
-                //                }
 
-                if (Math.abs(lastRenderedScrollTop - scrollTop) > 20 ||
-                    Math.abs(lastRenderedScrollLeft - scrollLeft) > 20) {
-                    //                    if (options.forceSyncScrolling || (
-                    //                            Math.abs(lastRenderedScrollTop - scrollTop) < viewportH &&
-                    //                            Math.abs(lastRenderedScrollLeft - scrollLeft) < viewportW)) {
-
+                if (Math.abs(lastRenderedScrollTop - scrollTop) > 20 || Math.abs(lastRenderedScrollLeft - scrollLeft) > 20) {
                     render();
-                    //                    } else {
-                    //                        h_render = setTimeout(render, 50);
-                    //                    }
-
                     trigger(self.onViewportChanged, {});
                 }
                 currentScrollCoordinates.x = $viewport[0].scrollLeft;
@@ -3673,7 +2403,7 @@ const KEY_CODE_Z = 90;
                     }
                 }
 
-                h_postrender = setTimeout(asyncPostProcessRows, options.asyncPostRenderDelay);
+                h_postrender = setTimeout(asyncPostProcessRows, 50);
                 return;
             }
         }
@@ -3763,7 +2493,7 @@ const KEY_CODE_Z = 90;
                     }
                     setTimeout(function() {
                             $cell.queue(function() {
-                                $cell.toggleClass(options.cellFlashingCssClass).dequeue();
+                                $cell.toggleClass("flashing").dequeue();
                                 toggleCellClass(times - 1);
                             });
                         },
@@ -3996,7 +2726,6 @@ const KEY_CODE_Z = 90;
                 return;
             }
 
-            var isEditableRowHeader = $(e.target).hasClass("editable-row-header");
             var isOnActiveCell = activeRow == cell.row && activeCell == cell.cell && activeCellNode == $(e.target)[0];
 
             if ($(e.target).is("img") && $(e.target.parentNode).hasClass("enum")) {
@@ -4048,14 +2777,7 @@ const KEY_CODE_Z = 90;
                 return;
             }
 
-            if (isEditableRowHeader || (!isOnActiveCell) && canCellBeActive(cell.row, cell.cell)) {
-                if (!getEditorLock().isActive() || getEditorLock().commitCurrentEdit()) {
-                    scrollRowIntoView(cell.row, false);
-                    var newCellNode = $(e.target).closest('.slick-cell')[0] || $(e.target).closest('.header')[0];
-                    setActiveCellInternal(newCellNode, null, e.ctrlKey);
-                }
-            }
-            if (options.gridType == IS_HSF_GRID && $(e.target).hasClass('header') && !isEditableRowHeader) {
+            if (options.gridType == IS_HSF_GRID && $(e.target).hasClass('header')) {
                 if (getRHData()[getActiveCell().row][0].acctTrack == null) {
                     if (getRHData()[getActiveCell().row][1] && getRHData()[getActiveCell().row][1].acctTrack != null) {
                         if (!((getRHData()[getActiveCell().row][1].status & IS_WRITABLE) != 0))
@@ -4107,7 +2829,7 @@ const KEY_CODE_Z = 90;
                 row: activeRow,
                 cell: activeCell,
                 selectedCellNode: activeCellNode,
-                selectedCell: data[activeRow][activeCell]
+                selectedCell: cells[activeRow][activeCell]
             }, evtObj);
         }
 
@@ -4169,7 +2891,7 @@ const KEY_CODE_Z = 90;
                         activeRow = getRowFromNode(activeCellNode.parentNode);
                         activeCell = activePosX = getCellFromNode(activeCellNode);
                         trigger(self.onActiveCellChanged, getActiveCell());
-                        if (ko.dataFor($contextMenu[0])) ko.dataFor($contextMenu[0]).selectedCell = data[activeRow][activeCell];
+                        if (ko.dataFor($contextMenu[0])) ko.dataFor($contextMenu[0]).selectedCell = cells[activeRow][activeCell];
                         contextItems = $("#edit-member-item, #adhoc-actions-item");
                     }
                     break;
@@ -4198,9 +2920,9 @@ const KEY_CODE_Z = 90;
             // var ord = null;
             // if ($(e.target).hasClass("header")) {
             //     var row = +$(e.target).closest(".slick-row").attr("row");
-            //     ord = options.nCols * (DataOrigin_r + row) + $(e.target).index();
+            //     ord = options.nCols * (numberOfRowHeaders + row) + $(e.target).index();
             // } else if ($(e.target).closest(".slick-header-column", ".slick-header-columns").length > 0) {
-            //     ord = ($(e.target).closest(".slick-header.ui-state-default").index() - 1) * options.nCols + +$(e.target).closest(".slick-header-column", ".slick-header-columns").attr("col") + DataOrigin_c;
+            //     ord = ($(e.target).closest(".slick-header.ui-state-default").index() - 1) * options.nCols + +$(e.target).closest(".slick-header-column", ".slick-header-columns").attr("col") + numberOfColumnHeaders;
             // }
 
             var $cell = $(e.target).closest(".slick-cell")[0] || $(e.target).closest(".slick-header-column")[0];
@@ -4285,7 +3007,7 @@ const KEY_CODE_Z = 90;
 
             var w = 0;
             for (var i = 0; i < columns.length && w < x; i++) {
-                w += columns[i + DataOrigin_c].width;
+                w += columns[i + numberOfColumnHeaders].width;
                 cell++;
             }
 
@@ -4352,13 +3074,13 @@ const KEY_CODE_Z = 90;
 
             var x1 = 0;
             for (var i = 0; i < cell; i++) {
-                if (cellExists(row, i + DataOrigin_c)) {
-                    x1 += columns[i + DataOrigin_c].width;
+                if (cellExists(row, i + numberOfColumnHeaders)) {
+                    x1 += columns[i + numberOfColumnHeaders].width;
                 }
             }
             var x2 = 0;
-            if (cellExists(row, cell + DataOrigin_c)) {
-                x2 = x1 + columns[cell + DataOrigin_c].width;
+            if (cellExists(row, cell + numberOfColumnHeaders)) {
+                x2 = x1 + columns[cell + numberOfColumnHeaders].width;
             }
 
             return {
@@ -4430,22 +3152,17 @@ const KEY_CODE_Z = 90;
                 activeCell = activePosX = getCellFromNode(activeCellNode);
 
                 if (opt_editMode == null) {
-                    opt_editMode = (activeRow == getDataLength()) || options.autoEdit;
+                    opt_editMode = (activeRow == getDataLength());
                 }
 
                 $(activeCellNode).addClass("active");
                 $(rowsCache[activeRow].rowNode).addClass("active");
 
-                if (options.editable && opt_editMode &&  isCellPotentiallyEditable(activeRow, activeCell)  && data[activeRow][activeCell].types !== DATA_TYPE_ENUMERATION) {
+                if (options.editable && opt_editMode &&  isCellPotentiallyEditable(activeRow, activeCell)  && cells[activeRow][activeCell].types !== DATA_TYPE_ENUMERATION) {
                     clearTimeout(h_editorLoader);
 
-                    if (options.asyncEditorLoading) {
-                        h_editorLoader = setTimeout(function() {
-                            makeActiveCellEditable();
-                        }, options.asyncEditorLoadDelay);
-                    } else {
-                        makeActiveCellEditable();
-                    }
+                    makeActiveCellEditable();
+                    
                 }
             } else {
                 activeRow = activeCell = null;
@@ -4535,7 +3252,7 @@ const KEY_CODE_Z = 90;
                     var d = getDataItem(activeRow);
                     $(activeCellNode).removeClass("editable invalid");
                     if (d) {
-                        var currCell = data[activeRow][activeCell];
+                        var currCell = cells[activeRow][activeCell];
                         var formatter = getFormatter(currCell.types);
                         activeCellNode.innerHTML = formatter(currCell.value, currCell);
                         invalidatePostProcessingResults(activeRow);
@@ -4570,41 +3287,17 @@ const KEY_CODE_Z = 90;
             // cancel pending async call if there is one
             clearTimeout(h_editorLoader);
 
-            var isEditableRowHeader = $(activeCellNode).hasClass("editable-row-header");
-            var isEditableColumnHeader = $(activeCellNode).hasClass("slick-header-column");
-
-//            if ($(activeCellNode).hasClass('header') && !isEditableColumnHeader) {
-//                // if ((data[activeRow][activeCell].status & READ_ONLY) || (!isCellPotentiallyEditable(activeRow, activeCell))) {
-//                    return;
-//                // }
-//            }
-            if (!isEditableRowHeader && !isEditableColumnHeader) {
-                if ((data[activeRow][activeCell].status & READ_ONLY) || (!isCellPotentiallyEditable(activeRow, activeCell))) {
-                    return;
-                }
+            if ((data[activeRow][activeCell].status & READ_ONLY) || (!isCellPotentiallyEditable(activeRow, activeCell))) {
+                return;
             }
+            
 
             var columnDef, item, editorType, index;
-            // Handling for row header cell editing
-            if (isEditableRowHeader) {
-                columnDef = $(activeCellNode).index();
-                item = RHdata[+activeRow]; 
-                editorType = DATA_TYPE_UNSPECIFIED;
-                index = [DataOrigin_r + +$(activeCellNode).attr('hrindex'), +$(activeCellNode).attr('hcindex')];
-            // Handling for column header cell editing
-            } else if (isEditableColumnHeader) {
-                columnDef = $(activeCellNode).attr('level');
-                item = $(activeCellNode).data("column");
-                editorType = DATA_TYPE_UNSPECIFIED;
-                activeCell = DataOrigin_c + +$(activeCellNode).attr('col');
-                activeRow = +$(activeCellNode).attr('level');
-                index = [activeRow, activeCell];
-            // Handling for general cell editing
-            } else {
-                columnDef = columns[activeCell + DataOrigin_c];
-                item = getDataItem(activeRow);
-                editorType = data[activeRow][activeCell].types;
-            }
+
+            columnDef = columns[activeCell + numberOfColumnHeaders];
+            item = getDataItem(activeRow);
+            editorType = cells[activeRow][activeCell].types;
+        
 
             if (isReport) { //for V1 reprots are readonly
                 editorType = DATA_TYPE_UNSPECIFIED
@@ -4624,9 +3317,7 @@ const KEY_CODE_Z = 90;
             $(activeCellNode).addClass("editable");
 
             // don't clear the cell if a custom editor is passed through
-            if (isEditableColumnHeader) {
-                $(activeCellNode).find("span").text("");
-            } else if (!editor) {
+            if (!editor) {
                 activeCellNode.innerHTML = "";
             }
 
@@ -4667,7 +3358,7 @@ const KEY_CODE_Z = 90;
             // if so, do not steal the focus from the editor
             if (getEditorLock().commitCurrentEdit()) {
                 setFocus();
-                if (options.autoEdit && !$(activeCellNode).hasClass("header")) {
+                if (!$(activeCellNode).hasClass("header")) {
                     navigateDown();
                 }
             }
@@ -4795,23 +3486,23 @@ const KEY_CODE_Z = 90;
         }
 
         //        function scrollRowIntoView(row, doPaging) {
-        //            var rowAtTop = row * options.rowHeight;
-        //            var rowAtBottom = (row + 1) * options.rowHeight - viewportH + (viewportHasHScroll ? scrollbarDimensions.height : 0);
+        //            var rowAtTop = row * rowDefaults.height;
+        //            var rowAtBottom = (row + 1) * rowDefaults.height - viewportH + (viewportHasHScroll ? scrollbarDimensions.height : 0);
         //
         //            // need to page down?
-        //            if ((row + 1) * options.rowHeight > scrollTop + viewportH + offset) {
+        //            if ((row + 1) * rowDefaults.height > scrollTop + viewportH + offset) {
         //                scrollTo(doPaging ? rowAtTop : rowAtBottom);
         //                render();
         //            }
         //            // or page up?
-        //            else if (row * options.rowHeight < scrollTop + offset) {
+        //            else if (row * rowDefaults.height < scrollTop + offset) {
         //                scrollTo(doPaging ? rowAtBottom : rowAtTop);
         //                render();
         //            }
         //        }
         //
         //        function scrollRowToTop(row) {
-        //            scrollTo(row * options.rowHeight);
+        //            scrollTo(row * rowDefaults.height);
         //            render();
         //        }
         //changes done for scrollRowIntoView() & scrollRowToTop() for supporting row height
@@ -4839,12 +3530,12 @@ const KEY_CODE_Z = 90;
 
         function scrollPage(dir) {
             var deltaRows = dir * numVisibleRows;
-            scrollTo((getRowFromPosition(scrollTop) + deltaRows) * options.rowHeight);
+            scrollTo((getRowFromPosition(scrollTop) + deltaRows) * rowDefaults.height);
             render();
 
-            if (options.enableCellNavigation && activeRow != null) {
+            if (true && activeRow != null) {
                 var row = activeRow + deltaRows;
-                var dataLengthIncludingAddNew = getDataLengthIncludingAddNew();
+                var dataLengthIncludingAddNew = getDataLength();
                 if (row >= dataLengthIncludingAddNew) {
                     row = dataLengthIncludingAddNew - 1;
                 }
@@ -4880,7 +3571,7 @@ const KEY_CODE_Z = 90;
         }
 
         function getColspan(row, cell) {
-            var metadata = data.getItemMetadata && data.getItemMetadata(row);
+            var metadata = cells.getItemMetadata && cells.getItemMetadata(row);
             if (!metadata || !metadata.columns) {
                 return 1;
             }
@@ -4910,7 +3601,7 @@ const KEY_CODE_Z = 90;
         function findLastFocusableCell(row) {
             var cell = 0;
             var lastFocusableCell = null;
-            while (cell < columns.length - DataOrigin_c) {
+            while (cell < columns.length - numberOfColumnHeaders) {
                 if (canCellBeActive(row, cell)) {
                     lastFocusableCell = cell;
                 }
@@ -4969,7 +3660,7 @@ const KEY_CODE_Z = 90;
 
         function gotoDown(row, cell, posX) {
             var prevCell;
-            var dataLengthIncludingAddNew = getDataLengthIncludingAddNew();
+            var dataLengthIncludingAddNew = getDataLength();
             while (true) {
                 if (++row >= dataLengthIncludingAddNew) {
                     return null;
@@ -5040,7 +3731,7 @@ const KEY_CODE_Z = 90;
             }
 
             var firstFocusableCell = null;
-            var dataLengthIncludingAddNew = getDataLengthIncludingAddNew();
+            var dataLengthIncludingAddNew = getDataLength();
             while (++row < dataLengthIncludingAddNew) {
                 firstFocusableCell = findFirstFocusableCell(row);
                 if (firstFocusableCell !== null) {
@@ -5056,7 +3747,7 @@ const KEY_CODE_Z = 90;
 
         function gotoPrev(row, cell, posX) {
             if (row == null && cell == null) {
-                row = getDataLengthIncludingAddNew() - 1;
+                row = getDataLength();
                 cell = posX = columns.length - 1;
                 if (canCellBeActive(row, cell)) {
                     return {
@@ -5125,7 +3816,7 @@ const KEY_CODE_Z = 90;
          */
         function navigate(dir, ctrlKey) {
 
-            if (!options.enableCellNavigation) {
+            if (!true) {
                 return false;
             }
 
@@ -5212,8 +3903,8 @@ const KEY_CODE_Z = 90;
                         } else {
                             activeRow--;
                             dir = "next";
-                            activeCell = options.nCols - options.DataOrigin_c - 1;
-                            activePosX = options.nCols - options.DataOrigin_c - 1;
+                            activeCell = options.nCols - numberOfColumnHeaders - 1;
+                            activePosX = options.nCols - numberOfColumnHeaders - 1;
                         }
                     }
                 } else if (dir == "next") {
@@ -5277,7 +3968,7 @@ const KEY_CODE_Z = 90;
                 return;
             }
 
-            if (!options.enableCellNavigation) {
+            if (!true) {
                 return;
             }
 
@@ -5286,12 +3977,12 @@ const KEY_CODE_Z = 90;
         }
 
         function canCellBeActive(row, cell) {
-            if (!options.enableCellNavigation || row >= getDataLengthIncludingAddNew() ||
+            if (!true || row >= getDataLength() ||
                 row < 0 || cell >= columns.length || cell < 0) {
                 return false;
             }
 
-            var rowMetadata = data.getItemMetadata && data.getItemMetadata(row);
+            var rowMetadata = cells.getItemMetadata && cells.getItemMetadata(row);
             if (rowMetadata && typeof rowMetadata.focusable === "boolean") {
                 return rowMetadata.focusable;
             }
@@ -5312,7 +4003,7 @@ const KEY_CODE_Z = 90;
                 return false;
             }
 
-            var rowMetadata = data.getItemMetadata && data.getItemMetadata(row);
+            var rowMetadata = cells.getItemMetadata && cells.getItemMetadata(row);
             if (rowMetadata && typeof rowMetadata.selectable === "boolean") {
                 return rowMetadata.selectable;
             }
@@ -5342,7 +4033,7 @@ const KEY_CODE_Z = 90;
             var newCell = getCellNode(row, cell);
 
             // if selecting the 'add new' row, start editing right away
-            setActiveCellInternal(newCell, forceEdit || (row === getDataLength()) || options.autoEdit);
+            setActiveCellInternal(newCell, forceEdit || (row === getDataLength()));
 
             // if no editor was created, set the focus back on the grid
             if (!currentEditor) {
@@ -5374,7 +4065,7 @@ const KEY_CODE_Z = 90;
                     $(container + " .row" + getRowFromNode(b.parentNode) + ":not(.dummy)").addClass('active');
                 });
 
-                setActiveCellInternal(cellNode, forceEdit || (row === getDataLength()) || options.autoEdit);
+                setActiveCellInternal(cellNode, forceEdit || (row === getDataLength()));
             }
         }
 
@@ -5382,9 +4073,8 @@ const KEY_CODE_Z = 90;
         // IEditor implementation for the editor lock
 
         function commitCurrentEdit() {
-            var isEditableRowHeader = $(activeCellNode).hasClass("editable-row-header");
-            var item = isEditableRowHeader ? RHdata[+activeRow] : getDataItem(activeRow);
-            var column = isEditableRowHeader ? $(activeCellNode).index() : columns[activeCell];
+            var item = getDataItem(activeRow);
+            var column = columns[activeCell];
 
             if (currentEditor) {
                 if (currentEditor.isValueChanged()) {
@@ -5413,23 +4103,9 @@ const KEY_CODE_Z = 90;
                                             doSpread(index[0], index[1], this.serializedValue, this.prevSerializedValue);
                                         }
                                     }
-                                    if (isEditableRowHeader) {
-                                        var c = item[column];
-                                        var prevValStr = ''; //stringRepeat(STR_PARENT_MEMBER_HEADER_INDENT, c.nL + 1);
-                                        if (c.hasChildren) {
-                                            prevValStr = (c.isExpanded) ?
-                                                prevValStr + "<img func='collapseExpand' src='" + IMGURL_EXPANDED + "'/>&nbsp" :
-                                                prevValStr + "<img func='collapseExpand' src='" + IMGURL_COLLAPSED + "'/>&nbsp";
-                                        }
-
-                                        // For HSF GRIDS
-                                        if (options.gridType == IS_HSF_GRID) prevValStr = "";
-
-                                        activeCellNode.innerHTML = prevValStr + item[column].value;
-
-                                    } else {
-                                        updateRow(this.row);
-                                    }
+                                        
+                                    updateRow(this.row);
+                                    
 
                                     var cellDep, deps, cellValue;
                                     var cellTarget = item[activeCell].dep;
@@ -5563,10 +4239,6 @@ const KEY_CODE_Z = 90;
             return cellStyle;
         }
 
-        function getRHData() {
-            return RHdata;
-        }
-
         // Accepts an array of cells in JSON format
         function updateGridFromDeltaResponse(deltaCells) {
             var cellIndex, r, c, cellValue;
@@ -5592,20 +4264,6 @@ const KEY_CODE_Z = 90;
                 editedCellsToCommit[$(cellNode).attr("cellsindex")] = value;
         }
 
-        function setEditedHeaderCells(cellNode, value) {
-            var hRow = parseInt($(cellNode).attr("hRIndex"));
-            var hCol = parseInt($(cellNode).attr("hCIndex"));
-            if (RHdata[hRow] && RHdata[hRow][hCol] && RHdata[hRow][hCol].mbrInst && RHdata[hRow][hCol].mbrInst[0]) {
-                editedHeaderCellsToCommit[hRow + "x" + hCol] = {};
-                if (hCol == 0)
-                    editedHeaderCellsToCommit[hRow + "x" + hCol].oldValue = ($(cellNode).text() == null) ? "" : $(cellNode).text();
-                else
-                    editedHeaderCellsToCommit[hRow + "x" + hCol].oldValue = null;
-                editedHeaderCellsToCommit[hRow + "x" + hCol].newValue = value;
-                editedHeaderCellsToCommit[hRow + "x" + hCol].parentName = RHdata[hRow][hCol].mbrInst[0];
-            }
-        }
-
         function clearEditedCellsToCommit() {
             editedCellsToCommit = {};
             clearEditedHeaderCellsToCommit();
@@ -5629,8 +4287,8 @@ const KEY_CODE_Z = 90;
         }
 
         function makeCellAutoSaved(rowIndex, colIndex) {
-            if(data[rowIndex] && data[rowIndex][colIndex]){
-                var cell = data[rowIndex][colIndex];
+            if(data[rowIndex] && cells[rowIndex][colIndex]){
+                var cell = cells[rowIndex][colIndex];
                 var cellNode = $(container + " div[cellsindex='" + rowIndex + "x" + colIndex + "']")[0];
                 if ((cell.status & IS_IMPACTED) == 0 && !$(cellNode).hasClass('impacted')) {
                     $(cellNode).css('background-color', '');
@@ -5646,11 +4304,11 @@ const KEY_CODE_Z = 90;
         }
 
         function getDataOriginCol() {
-            return DataOrigin_c;
+            return numberOfColumnHeaders;
         }
 
         function getDataOriginRow() {
-            return DataOrigin_r;
+            return numberOfRowHeaders;
         }
 
         function handleCollapseExpand(e) {
@@ -5667,9 +4325,8 @@ const KEY_CODE_Z = 90;
             mbrInst = mbrInst.value.split(',');
             var dim = findDimInDimensions(mbrInst.length, e.currentTarget.parentNode);
             findMemInMembers(mbrInst, dim.members);
-            processDataStructures();
+            
             setColumns(columns);
-            //recreateColumnHeaders();
             setSlideDown(true);
             invalidate();
             e.stopImmediatePropagation();
@@ -5837,8 +4494,8 @@ const KEY_CODE_Z = 90;
 
                         // handle caching
                         (status == 0) ?
-                        delete collapsedRowHeaderCache[mbrInstances]:
-                            collapsedRowHeaderCache[mbrInstances] = members[i];
+                        delete options.collapsedRowHeaderCache[mbrInstances]:
+                            options.collapsedRowHeaderCache[mbrInstances] = members[i];
                         return;
                     }
 
@@ -5850,8 +4507,8 @@ const KEY_CODE_Z = 90;
 
                             // handle caching
                             (status == 0) ?
-                            delete collapsedRowHeaderCache[mbrInstances]:
-                                collapsedRowHeaderCache[mbrInstances] = members[i];
+                            delete options.collapsedRowHeaderCache[mbrInstances]:
+                                options.collapsedRowHeaderCache[mbrInstances] = members[i];
                             return;
                         }
                     }
@@ -5879,34 +4536,24 @@ const KEY_CODE_Z = 90;
 
         }
 
-        function validateJSON(container, headers, cells, options) {
+        function validateParameters(container, dimensions, cells, options) {
             if ($(container).length < 1) {
                 throw new Error("SlickGrid requires a valid container, " + container + " does not exist in the DOM.");
             }
-            if (!(headers.hasOwnProperty("HspSlickColumnHeaders") && headers.hasOwnProperty("HspSlickRowHeaders") &&
-                    (Object.prototype.toString.call(headers.HspSlickColumnHeaders) === '[object Array]') && (Object.prototype.toString.call(headers.HspSlickRowHeaders) === '[object Array]'))) {
-                throw new Error("Invalid Headers JSON Structure");
-            }
+
             if (Object.prototype.toString.call(cells) !== '[object Array]') {
                 throw new Error("Invalid Cells JSON Structure");
             }
-            var optionProps = ["PoundMissing", "DataOrigin_c", "DataOrigin_r", "accessibilityMode", "isSizeToFitColumns", "isSizeToFitRows", "minPrecision", "maxPrecision", "gridId",
-                "HspStylesMap", "HspFontsMap", "HspBordersMap", "nRows", "nCols", "allowCustomFormatting", "minNumRows", "minNumCols", "row_height", "column_width", "columnWidthStates"
+
+            var optionProps = ["PoundMissing", "accessibilityMode", "isSizeToFitColumns", "isSizeToFitRows", "minPrecision", "maxPrecision", "gridId",
+                "HspStylesMap", "HspFontsMap", "HspBordersMap", "allowCustomFormatting", "minNumRows", "minNumCols", "row_height", "column_width", "columnWidthStates"
             ];
             for (var i in optionProps) {
                 if (!options.hasOwnProperty(optionProps[i])) {
-                    if (optionProps[i] == "nRows") {
-                        options.nRows = cells.length;
-                    } else if (optionProps[i] == "nCols") {
-                        options.nCols = cells[0].split('|').length;
-                    } else if (optionProps[i] == "allowCustomFormatting") {
+                    if (optionProps[i] == "allowCustomFormatting") {
                         options.allowCustomFormatting = true;
                     } else if (optionProps[i] == "gridType") {
-                        options.gridType = IS_PLANNING_GRID; // default to Planning Grid 
-                        // } else if (optionProps[i] == "minNumRows") {
-                        //     options.minNumRows = DEFAULT_NUM_ROWS; // default to Planning Grid 
-                        // } else if (optionProps[i] == "minNumCols") {
-                        //     options.minNumCols = DEFAULT_NUM_COLUMNS; // default to Planning Grid 
+                        options.gridType = IS_PLANNING_GRID; 
                     } else if (optionProps[i] == "PoundMissing") {
                         options.PoundMissing = "";
                     } else if (optionProps[i] == "minPrecision") {
@@ -5952,7 +4599,7 @@ const KEY_CODE_Z = 90;
         function updateClientCell(row, col, value, updateType, fromFloodFill, bgColor, tooltip) {
             var slickRow = row;
             var item = getDataItem(row);
-            var column = columns[parseInt(col) + parseInt(DataOrigin_c)];
+            var column = columns[parseInt(col) + parseInt(numberOfColumnHeaders)];
 
             if (activeRow < getDataLength()) {
                 var editCommand = {
@@ -6018,7 +4665,7 @@ const KEY_CODE_Z = 90;
         function resizeRowHeaders(init) {
             var maxScrollWidth;
             var leftShift = -10;
-            for (var i = 0; i < DataOrigin_c; i++) {
+            for (var i = 0; i < numberOfColumnHeaders; i++) {
                 maxScrollWidth = (isReport) ? 25 : columns[i].width - 9;
                 $(container + " .slick-cell.hl" + i + ".header").map(function(a, el) {
                     if (el.style.height || options.gridType == IS_HSF_GRID || isReport) return;
@@ -6071,112 +4718,6 @@ const KEY_CODE_Z = 90;
             return isReport;
         }
 
-        function addNewRow(rowIndex, before) {
-            var rowhdcount = getArrayObjSize(RHdata[0]);
-            var addition = 0;
-            var newName = "";
-            var celllen = getArrayObjSize(cells[0]);
-            if (rowhdcount > 1 && getActiveCell().cell > 0) {
-                try {
-                    if (RHdata[rowIndex][0] && RHdata[rowIndex][0].size)
-                        addition = RHdata[rowIndex][0].size - 1;
-                    if (RHdata[rowIndex][0] && RHdata[rowIndex][0].value) {
-                        var nameArr = RHdata[rowIndex][0].value.split(':');
-                        if (nameArr.length > 0)
-                            newName = nameArr[0] + ":New";
-                    }
-
-                } catch (ex) {}
-                /*if(RHdata[rowIndex][0].size !=null){
-                    RHdata[rowIndex][0].size += 1; 
-                }else{
-                    for(var k=rowIndex-1;k>=0;k--){
-                        if(RHdata[k][0].size !=null){
-                            RHdata[k][0].size += 1;
-                            break;
-                        }
-                    }
-                }*/
-            } else {
-                try {
-                    addition = RHdata[rowIndex][0].size - 1;
-                    if (RHdata[rowIndex][0] && RHdata[rowIndex][0].value) {
-                        var nameArr = RHdata[rowIndex][0].value.split(':');
-                        if (nameArr.length > 0)
-                            newName = nameArr[0] + ":New";
-                    }
-                } catch (ex) {}
-            }
-            var d = grid.getData();
-            var arr = [];
-            var len = getArrayObjSize(d[0]);
-            for (var i = 0; i < len; i++) {
-                if (i > celllen - 1) {
-                    arr.push({
-                        value: "0.00"
-                    });
-                } else {
-                    arr.push({
-                        value: "0.00",
-                        types: (i > celllen - 1) ? 1 : 2,
-                        status: (i > celllen - 1) ? 1 : 2
-                    });
-                }
-            }
-            if (before) {
-                d.splice(rowIndex - 1, 0, arr);
-            } else {
-                d.splice(rowIndex + 1 + addition, 0, arr);
-            }
-
-            var rh = RHdata;
-            var rhArr = [];
-            var rhLen = getArrayObjSize(RHdata[0]);
-
-            for (var i = 0; i < rhLen; i++) {
-                if (i > celllen - 1) {
-                    rhArr.push({
-                        value: ""
-                    });
-                } else {
-                    rhArr.push({
-                        value: newName,
-                        types: (i > celllen - 1) ? 1 : 2,
-                        status: (i > celllen - 1) ? 1 : 1
-                    });
-                    newName = "";
-                }
-            }
-
-            if (before) {
-                RHdata.splice(rowIndex - 1, 0, rhArr);
-            } else {
-                RHdata.splice(rowIndex + 1 + addition, 0, rhArr);
-            }
-
-            var cellsarr = [];
-
-            for (var i = 0; i < celllen; i++) {
-                if (i > celllen - 1) break;
-                cellsarr.push({
-                    value: "0.00",
-                    types: (i > celllen - 1) ? 1 : 2,
-                    status: (i > celllen - 1) ? 1 : 2
-                });
-            }
-            if (before) {
-                cells.splice(rowIndex - 1, 0, cellsarr);
-            } else {
-                cells.splice(rowIndex + 1 + addition, 0, cellsarr);
-                if (newRowlist.length > 0)
-                    newRowlist += ";"
-                newRowlist += rowIndex + 1 + addition;
-            }
-            grid.setData(d);
-            grid.render();
-            setActiveCell(rowIndex + 1 + addition, 0);
-            overlayPlugin.setSelectAllHandler(new Slick.Range(rowIndex + 1 + addition, 0, rowIndex + 1 + addition, celllen - 1), false, false);
-        }
 
         function getArrayObjSize(arrObj) {
             var len = 0,
@@ -6255,10 +4796,6 @@ const KEY_CODE_Z = 90;
             }
         }
 
-        function getRowHeaderData() {
-            return RHdata;
-        }
-
         function getCurrentFocus() {
             return currentFocus;
         }
@@ -6268,18 +4805,18 @@ const KEY_CODE_Z = 90;
             rowPositionCache = {
                 0: {
                     top: 0,
-                    height: options.rowHeight,
-                    bottom: options.rowHeight
+                    height: rowDefaults.height,
+                    bottom: rowDefaults.height
                 }
             };
         }
 
         function setCollapsedRowHeaderCache(_collapsedRowHeaderCache) {
-            collapsedRowHeaderCache = _collapsedRowHeaderCache;
+            options.collapsedRowHeaderCache = _collapsedRowHeaderCache;
         }
 
         function getCollapsedRowHeaderCache() {
-            return collapsedRowHeaderCache;
+            return options.collapsedRowHeaderCache;
         }
 
         function getCurrentViewCoordinates() {
@@ -6298,20 +4835,6 @@ const KEY_CODE_Z = 90;
 
         function getRowHeaderCache() {
             return rowsCache2;
-        }
-
-        function printTotalCells() {
-            console.log("Json Total Rows:" + options.nRows + ";Json Total columns:" + options.nCols + ";Current Column count: " + cellCount + " ;Current Row count: " + rowCount + ";Current Cell div count : " + cellCount * rowCount);
-        }
-
-        function processJSON(json) {
-            setHeaders(json.HspSlickHeaders);
-            setCells(parseJSONCells(json.HspSlickCells));
-            setOptions($.extend(options, json.HspSlickOptions));
-            processDataStructures();
-            setColumns(columns);
-            recreateColumnHeaders();
-            invalidate();
         }
 
         function getConstants(expression) {
@@ -6386,7 +4909,7 @@ const KEY_CODE_Z = 90;
         function cacheRowPositions() {
             initializeRowPositions();
             for (var i = 0; i <= getDataLength(); i++) {
-                var metadata = data.getItemMetadata && data.getItemMetadata(i);
+                var metadata = cells.getItemMetadata && cells.getItemMetadata(i);
 
                 rowPositionCache[i] = {
                     top: (rowPositionCache[i - 1]) ?
@@ -6394,7 +4917,7 @@ const KEY_CODE_Z = 90;
                         0,
                     height: (metadata && metadata.hasOwnProperty('rows') && metadata.rows[i]) ?
                         metadata.rows[i].height :
-                        options.rowHeight
+                        rowDefaults.height
                 }
 
                 rowPositionCache[i].bottom = rowPositionCache[i].top + rowPositionCache[i].height;
@@ -6409,26 +4932,36 @@ const KEY_CODE_Z = 90;
             return performSlideDown;
         }
         
-        function recreateColumnHeaders(){
 
-            $(".ui-state-default").remove();
-            var $rowHeaderViewport = $("#row-header-viewport")[0];
-            allHeaders = [];
+        function preprocess() {
+            // attach defaults and 
+            options = $.extend({}, defaults, options);
 
-            for (var i = 0; i < DataOrigin_r; i++) {
-                $headerScroller = $("<div id='scroller" + i + "' class='slick-header ui-state-default' style='overflow:hidden;position:relative;' />")
-                    .bind("click", handleColumnHeaderClick)
-                    .bind("dblclick", handleDblClick)
-                    .bind("contextmenu", handleContextMenu)
-                    .insertBefore($rowHeaderViewport);
-                $headers = $("<div id='headers" + i + "' class='slick-header-columns' style='left:-1000px' />").appendTo($headerScroller);
-                $headers.width(getHeadersWidth());
-                allHeaders.push($headers);
+            // create columns object
+            columns = createColumns();
+
+            // create dummy cells to pad
+            var difference = DEFAULT_NUM_ROWS - numberOfRows + numberOfColumnHeaders;
+
+            if (difference > 0) {
+
+                cells = cells.concat(new Array(difference).fill(new Array(numberOfColumns).fill(null)));
+
             }
 
-            $allHeaderScrollers = $(container + " .slick-header");
-            $allHeaderContainer = $(container + " .slick-header-columns:not(#frozen-column)")
-            createColumnHeaders();
+
+            difference = DEFAULT_NUM_COLUMNS - numberOfColumns + numberOfRowHeaders;
+
+            if (difference > 0) {
+                
+                for (let i = 0; i < cells.length; i++) {
+
+                    cells[i] = cells[i].concat(new Array(difference).fill(null));
+                    
+                }
+
+            }
+
         }
 
         //////////////////////////////////////////////////////////////////////////////////////////////
@@ -6458,7 +4991,6 @@ const KEY_CODE_Z = 90;
             "onAddNewRow": new Slick.Event(),
             "onValidationError": new Slick.Event(),
             "onViewportChanged": new Slick.Event(),
-            "onColumnsReordered": new Slick.Event(),
             "onColumnsResized": new Slick.Event(),
             "onCellChange": new Slick.Event(),
             "onBeforeEditCell": new Slick.Event(),
@@ -6483,9 +5015,6 @@ const KEY_CODE_Z = 90;
             "getRowHeaders": getRowHeaders,
             "getColumnIndex": getColumnIndex,
             "updateColumnHeader": updateColumnHeader,
-            "setSortColumn": setSortColumn,
-            "setSortColumns": setSortColumns,
-            "getSortColumns": getSortColumns,
             "getOptions": getOptions,
             "setOptions": setOptions,
             "getData": getData,
@@ -6544,9 +5073,6 @@ const KEY_CODE_Z = 90;
             "navigatePageDown": navigatePageDown,
             "getValidationTooltip": getValidationTooltip,
             "gotoCell": gotoCell,
-            //            "getTopPanel": getTopPanel,
-            //            "setTopPanelVisibility": setTopPanelVisibility,
-            "setHeaderRowVisibility": setHeaderRowVisibility,
             "getHeaderRow": getHeaderRow,
             "getHeaderRowColumn": getHeaderRowColumn,
             "getGridPosition": getGridPosition,
@@ -6560,7 +5086,6 @@ const KEY_CODE_Z = 90;
             "finishChunking": finishChunking,
             "getEditedCellsToCommit": getEditedCellsToCommit,
             "undirtyDirtyCells": undirtyDirtyCells,
-            "getRHData": getRHData,
             "getGridId": getGridId,
             "getHeaders": getHeaders,
             "getCells": getCells,
@@ -6579,15 +5104,12 @@ const KEY_CODE_Z = 90;
             "clearEditedHeaderCellsToCommit": clearEditedHeaderCellsToCommit,
             "getDimensionForCell": getDimensionForCell,
             "makeCellDirty": makeCellDirty,
-            "processDataStructures": processDataStructures,
-            "parseJSONCells": parseJSONCells,
             "init": finishInitialization,
             "destroy": destroy,
             "cacheRowPositions": cacheRowPositions, // for row height support
             "isGridDirty": isGridDirty,
             "updateClientCell": updateClientCell,
             "getConstants": getConstants,
-            "printTotalCells": printTotalCells,
             "isSlideDown":isSlideDown,
             "setSlideDown":setSlideDown,
             // IEditor implementation
@@ -6605,10 +5127,8 @@ const KEY_CODE_Z = 90;
             "findDimInDimensions": findDimInDimensions,
             "gotoHeaderCell": gotoHeaderCell,
             "onHeaderSelection": new Slick.Event(),
-            "addNewRow": addNewRow,
             "fireContextMenuEvent": fireContextMenuEvent,
             "getRowFromNode": getRowFromNode,
-            "getRowHeaderData": getRowHeaderData,
             "getCollapsedRowHeaderCache": getCollapsedRowHeaderCache,
             "setCollapsedRowHeaderCache": setCollapsedRowHeaderCache,
             "findMemInMembers": findMemInMembers,
@@ -6616,10 +5136,9 @@ const KEY_CODE_Z = 90;
             "focusWithCoordinates": focusWithCoordinates,
             "getActiveCellViewIndexes": getActiveCellViewIndexes,
             "getActiveCellDataIndexes": getActiveCellDataIndexes,
-            "getConstants": getConstants,
-            "processJSON": processJSON
+            "getConstants": getConstants
         });
-
+      
         init();
     }
 }(jQuery));

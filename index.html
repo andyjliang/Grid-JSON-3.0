@@ -22,6 +22,7 @@
 <script src="slick-scripts/slick.remotemodel.js"></script>
 <script src="slick-scripts/slick.utils.js"></script>
 
+<script src="SlickCell.js"></script>
 <script src="XMLParser.js"></script>
 
 <script type="text/javascript">
@@ -34,9 +35,11 @@
     
     // Parse xml document, outputting json
     let json = parser.parse(xmlDocument);
+    // Need more preprocessing 
+
 
     // Run new JSON to render Slick Grid
-    grid = new Slick.Grid("#myGrid", json.Dimensions, json.Data, json.Options);
+    grid = new Slick.Grid("#myGrid", json.Dimensions, json.Cells, json.Options);
   });
 
 </script>
